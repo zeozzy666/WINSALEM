@@ -6,7 +6,7 @@ if ("Request Inspection Warrant".equals(wfStatus))
 	//copy APO
 	copyAddresses(capId, newCap);
 	copyParcels(capId, newCap);
-	copyOwners(capId, newCap);
+	copyOwner(capId, newCap);
 	//copy asi
 	copyMatchingCustomFields(capId, newCap);
 	//link as child to AO
@@ -24,7 +24,7 @@ else if ("Request Order of Abatement".equals(wfStatus))
 	//copy APO
 	copyAddresses(capId, newCap);
 	copyParcels(capId, newCap);
-	copyOwners(capId, newCap);
+	copyOwner(capId, newCap);
 	//copy asi
 	copyMatchingCustomFields(capId, newCap);
 	//link as child to AO
@@ -42,7 +42,7 @@ else if ("Council Approval".equals(wfTask) && "Approved".equals(wfStatus))
 	//copy APO
 	copyAddresses(capId, newCap);
 	copyParcels(capId, newCap);
-	copyOwners(capId, newCap);
+	copyOwner(capId, newCap);
 	//copy asi
 	copyMatchingCustomFields(capId, newCap);
 	//link as child to AO

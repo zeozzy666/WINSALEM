@@ -6,7 +6,7 @@ if (recordType)
 	//copy APO
 	copyAddresses(capId, newCap);
 	copyParcels(capId, newCap);
-	copyOwners(capId, newCap);
+	copyOwner(capId, newCap);
 	//copy asi
 	copyMatchingCustomFields(capId, newCap);	
 	//link as child to AO
