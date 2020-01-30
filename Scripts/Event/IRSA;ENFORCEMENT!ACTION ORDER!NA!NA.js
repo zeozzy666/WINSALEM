@@ -8,7 +8,9 @@ if (recordType)
 	copyParcels(capId, newCap);
 	copyOwner(capId, newCap);
 	//copy asi
-	copyMatchingCustomFields(capId, newCap);	
+	copyMatchingCustomFields(capId, newCap);
+	//create follow up inspection
+	scheduleInspect(newCap, "Follow-Up Investigation", 14);	
 	//link as child to AO
 	var linkResult = aa.cap.createAppHierarchy(capId, newCap);
 	if (linkResult.getSuccess())
