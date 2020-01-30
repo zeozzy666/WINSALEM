@@ -1,7 +1,7 @@
 if (matches(inspResult, "Pass", "Fail") || true)
 {
 	var gsItems = getGuideSheetObjects(inspId);
-	var vTable = new Array();
+	var vTable = loadASITable("VIOLATIONS") || new Array();
 	var atLeast1 = false;
 	for (g in gsItems)
 	{
