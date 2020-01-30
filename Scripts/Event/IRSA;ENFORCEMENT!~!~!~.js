@@ -2,15 +2,23 @@ if (matches(inspResult, "Pass", "Fail") || true)
 {
 	var gsItems = getGuideSheetObjects(inspId);
 	var vTable = new Array();
+	var atLeast1 = false;
 	for (g in gsItems)
 	{
-		var thisItem = gsItems[g];
-		var row = new Array();
-		row["Violation"] = thisItem.text;
-		row["Status"] = thisItem.status;
-		row["Inspector Comment"] = thisItem.comment;
-		vTable.push(row);
+		if (!matches(gsItems[g].status, "Pass"))
+		{
+			var thisItem = gsItems[g];
+			var row = new Array();
+			row["Violation"] = thisItem.text;
+			row["Status"] = thisItem.status;
+			row["Inspector Comment"] = thisItem.comment;
+			vTable.push(row);
+			atLeast1 = true;
+		}
 	}
-	removeASITable("VIOLATIONS");
-	addASITable("VIOLATIONS", vTable);
+	if (atLeast1)
+	{
+		removeASITable("VIOLATIONS");
+		addASITable("VIOLATIONS", vTable);
+	}
 }
