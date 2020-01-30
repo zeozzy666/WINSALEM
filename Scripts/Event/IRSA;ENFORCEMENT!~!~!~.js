@@ -1,4 +1,4 @@
-if (matches(inspResult, "Pass", "Fail"))
+if (matches(inspResult, "Pass", "Fail") || true)
 {
 	var gsItems = getGuideSheetObjects(inspId);
 	var vTable = new Array();
