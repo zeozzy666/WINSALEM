@@ -9,6 +9,8 @@ if (recordType)
 	copyOwner(capId, newCap);
 	//copy asi
 	copyMatchingCustomFields(capId, newCap);
+	//copy ASIT
+	copyASITables(capId, newCap);
 	//create follow up inspection
 	scheduleInspect(newCap, "Follow-Up Investigation", 14);	
 	//link as child to AO
