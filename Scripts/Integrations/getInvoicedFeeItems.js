@@ -1,15 +1,15 @@
-var capId = null;
 var invoicedFeeItemsArray = new Array();
 var result = new Object();
 var message = "";
+var capId = null;
 try
-{
+{        
     eval(getScriptText("INCLUDES_ACCELA_FUNCTIONS", null, true));
     eval(getScriptText("INCLUDES_CUSTOM", null, true));  
 }
 catch(e1)
 {
-    aa.print("problem loading environment " + e1.message);
+    message += "problem loading environment " + e1.message + "\n";
 }
 try
 {
@@ -28,23 +28,24 @@ try
         var altId = thisRecord["B1_ALT_ID"];
         capId = aa.cap.getCapID(altId).getOutput();
         var thisFeeItem = new Object();
+        var thisFeeCode = thisRecord[""]
 
         thisFeeItem.ownerName = thisRecord["B1_OWNER_FNAME"] + " " + thisRecord["B1_OWNER_LNAME"];
-        //thisFeeItem.ownerStreet = thisRecord["B1"]        
-        thisFeeItem.ownerCity = thisRecord["B1_CITY"];
-        thisFeeItem.ownerState = thisRecord["B1_STATE"];
-        thisFeeItem.ownerZip = thisRecord["B1_ZIP"];
-        thisFeeItem.dateWorkPerformed = thisRecord["INVOICE_DATE"];
-        thisFeeItem.totalCost = thisRecord["GF_FEE"];
-        thisFeeItem.feeSeq = thisRecord["FEEITEM_SEQ_NBR"];
-        thisFeeItem.caseCloseDate  = getCloseDate(capId);
-        //thisFeeItem.Area 
-        //thisFeeItem.Pin
-        //thisFeeItem.Block
-        //thisFeeItem.Lot
-        //thisFeeItem.location
-        //thisFeeItem.chargeType
-        thisFeeItem.chargeCode = thisRecord["GF_L1"];
+        thisFeeItem.ownerStreet = ""
+        thisFeeItem.ownerCity = thisRecord["B1_CITY"] ? thisRecord["B1_CITY"] : "";
+        thisFeeItem.ownerState = thisRecord["B1_STATE"] ? thisRecord["B1_STATE"] : "";
+        thisFeeItem.ownerZip = thisRecord["B1_ZIP"] ? thisRecord["B1_ZIP"] : "";
+        thisFeeItem.dateWorkPerformed = thisRecord["INVOICE_DATE"] ? thisRecord["INVOICE_DATE"] : "";
+        thisFeeItem.totalCost = thisRecord["GF_FEE"] ? thisRecord["GF_FEE"] : "";
+        thisFeeItem.feeSeq = thisRecord["FEEITEM_SEQ_NBR"] ? thisRecord["FEEITEM_SEQ_NBR"] : "";
+        thisFeeItem.caseCloseDate  = getCloseDate();
+        thisFeeItem.Area = "";
+        thisFeeItem.Pin = "";
+        thisFeeItem.Block = "";
+        thisFeeItem.Lot = "";
+        thisFeeItem.location = "";
+        thisFeeItem.chargeType = "";
+        thisFeeItem.chargeCode = thisRecord["GF_L1"] ? thisRecord["GF_L1"] : "";
         thisFeeItem.caseID = altId;
         invoicedFeeItemsArray.push(thisFeeItem);        
     }
@@ -53,13 +54,14 @@ catch (err)
 {
     aa.env.setValue("returnCode", "-1"); // error
     aa.env.setValue("returnValue", err.message + " on line " + err.lineNumber);
-    aa.print(err.message);
+    message += err.message + "\n";
 }
 finally
 {
-	//result.message = message;
-    //result.invoicedFeeItemsArray = invoicedFeeItemsArray;
-    //aa.env.setValue("result", result);
+	result.message = message;
+    result.invoicedFeeItemsArray = invoicedFeeItemsArray;
+    aa.env.setValue("returnCode", "1");
+    aa.env.setValue("result", result);
 }
 
 function getRecords(fDate, tDate)
@@ -102,6 +104,10 @@ function getRecords(fDate, tDate)
         if (conn)
             conn.close();        
     }
+}
+function getCloseDate()
+{
+    return "";
 }
 function getScriptText(vScriptName, servProvCode, useProductScripts) {
     if (!servProvCode)  servProvCode = aa.getServiceProviderCode();
