@@ -63,7 +63,7 @@ function main()
 
     var subject = "Invoiced Fee Items for period $$fromdate$$ to $$todate$$".replace("$$fromdate$$", fromDate).replace("$$todate$$", toDate);
     var body = "Hello<BR><BR>Please find attached a copy of the Invoiced Fee Items report for the period $$fromdate$$ to $$todate$$<BR><BR>Thank you.".replace("$$fromdate$$", fromDate).replace("$$todate$$", toDate);
-    var sendResult = aa.sendEmail("noreply@cityofws.org", sendTo, "", subject, body, rFile);
+    var sendResult = aa.sendEmail("accelalms@CITYOFWS.ORG", sendTo, "", subject, body, rFile);
     if (sendResult.getSuccess())
       message += "Successfully sent report to " + sendTo + "\n";
     else
