@@ -30,7 +30,6 @@ if (r.getSuccess())
 	setDocCustomField(documentModel.documentNo, "Status", status);
 	setDocCustomField(documentModel.documentNo, "Status Date", statusDate);
 	setDocCustomField(documentModel.documentNo, "Status Time", statusTime);
-	//aa.print(r.getOutput())
 }
 else
 	{ logDebug(capIDString + ": Problem while trying to retrieve tracking info: " + r.getErrorMessage()); }
