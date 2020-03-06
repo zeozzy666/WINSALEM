@@ -8,7 +8,7 @@ function refreshDocTracking(docSeqNum)
 	//var userId = "645ACCEL3857";
 	//var uri = 'http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML=%3CTrackFieldRequest%20USERID=%22$$USERID$$%22%3E%3CRevision%3E1%3C/Revision%3E%3CClientIp%3E127.0.0.1%3C/ClientIp%3E%3CSourceId%3EUSPSTOOLS%3C/SourceId%3E%3CTrackID%20ID=%22$$TRACKID$$%22/%3E%3C/TrackFieldRequest%3E';
 	//var trackId = "9171999991703934968445";
-	if (trackId && trackId.length > 0)
+	if (trackId && trackId.length() > 0)
 	{
 		uri = uri.replace("$$TRACKID$$", trackId);
 		uri = uri.replace("$$USERID$$", userId);
