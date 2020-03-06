@@ -32,8 +32,8 @@ logDebug = function (edesc) {
 var appType = aa.env.getValue("Record");
 var status2Skip = aa.env.getValue("Status2Skip");
 //TESTING
-appType = "Enforcement/*/*/*";
-status2Skip = "Closed";
+//appType = "Enforcement/*/*/*";
+//status2Skip = "Closed";
 /*------------------------------------ END OF USER PARAMETERS --------------------------------*/
 
 var showDebug = true; // Set to true to see debug messages
