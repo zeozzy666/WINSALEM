@@ -6,7 +6,11 @@ function getDocCustomField(docSeqNum, fieldName, useSubGroup)
 	var doc = aa.document.getDocumentByPK(docSeqNum).getOutput();
 	if (!doc)
 		return false;
-	var docTemplate = doc.getTemplate().getTemplateForms().get(0).getSubgroups().toArray();
+	var docTemplate = doc.getTemplate();
+	if (docTemplate)
+		docTemplate = docTemplate.getTemplateForms().get(0).getSubgroups().toArray();
+	else
+		return false;
 	for (var sg in docTemplate)
 	{
 		var thisSubgroup = docTemplate[sg];
