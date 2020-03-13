@@ -87,7 +87,7 @@ function mainProcess() {
             var thisTrackingStatus = getDocCustomField(thisDocSeq, "Status");
             //refresh tracking info if not delivered
             if (!matches(thisTrackingStatus, "Delivered"))
-                var success = refreshDocTracking(thisDocSeq);
+                var success = refreshDocTracking(thisDocSeq, true);
         }
     }
 

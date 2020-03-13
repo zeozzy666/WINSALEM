@@ -1,4 +1,4 @@
-function refreshDocTracking(docSeqNum)
+function refreshDocTracking(docSeqNum, requestPoD)
 {
 	var settings = "WINSALEM_SETTINGS_USPS"
 	var trackId = getDocCustomField(docSeqNum, "Tracking Number");
@@ -34,6 +34,13 @@ function refreshDocTracking(docSeqNum)
 			setDocCustomField(docSeqNum, "Status Date", statusDate);
 			setDocCustomField(docSeqNum, "Status Time", statusTime);
 			logDebug(capIDString + ": Successfully refreshed tracking info");
+
+			if (matches(status, "Delivered") && requestPoD)
+			{
+				var mpSuffix = getNode(xml, "MPSUFFIX");
+				var mpDate = getNode(xml, "MPDATE");
+				requestMailPoD(trackId, mpSuffix, mpDate);
+			}
 			return true;
 		}
 		else
