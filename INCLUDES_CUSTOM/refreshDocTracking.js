@@ -2,8 +2,8 @@ function refreshDocTracking(docSeqNum, requestPoD)
 {
 	var settings = "WINSALEM_SETTINGS_USPS"
 	var trackId = getDocCustomField(docSeqNum, "Tracking Number");
-	var userId = lookup(settings, "USER_ID");
-	var uri = lookup(settings, 'TRACK_URI');
+	var userId = lookup_noLog(settings, "USER_ID");
+	var uri = lookup_noLog(settings, 'TRACK_URI');
 	//For Testing
 	//var userId = "645ACCEL3857";
 	//var uri = 'http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML=%3CTrackFieldRequest%20USERID=%22$$USERID$$%22%3E%3CRevision%3E1%3C/Revision%3E%3CClientIp%3E127.0.0.1%3C/ClientIp%3E%3CSourceId%3EUSPSTOOLS%3C/SourceId%3E%3CTrackID%20ID=%22$$TRACKID$$%22/%3E%3C/TrackFieldRequest%3E';

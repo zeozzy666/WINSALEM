@@ -1,11 +1,11 @@
 function requestMailPoD(trackId, mpSuffix, mpDate)
 {
 	var settings = "WINSALEM_SETTINGS_USPS"
-	var userId = lookup(settings, "USER_ID");
-	var uri = lookup(settings, 'POD_URI');
-	var email = lookup(settings, "POD_EMAIL");
-	var fName = lookup(settings, "POD_FNAME");
-	var lName = lookup(settings, "POD_LNAME");
+	var userId = lookup_noLog(settings, "USER_ID");
+	var uri = lookup_noLog(settings, 'POD_URI');
+	var email = lookup_noLog(settings, "POD_EMAIL");
+	var fName = lookup_noLog(settings, "POD_FNAME");
+	var lName = lookup_noLog(settings, "POD_LNAME");
 	//For Testing
 	//var userId = "645ACCEL3857";
 	//var uri = 'https://secure.shippingapis.com/ShippingAPI.dll?API=PTSRre&XML=%3CPTSRreRequest%20USERID=%$$userid$$%22%3E%3CTrackId%3E$$trackid$$%3C/TrackId%3E%3CMpSuffix%3E$$mpSuffix$$%3C/MpSuffix%3E%3CMpDate%3E$$mpDate$$%3C/MpDate%3E%3CFirstName%3E$$fName$$%3C/FirstName%3E%3CLastName%3E$$lName$$%3C/LastName%3E%3CEmail1%3E$$email$$%3C/Email1%3E%3CTableCode%3ET%3C/TableCode%3E%3C/PTSRreRequest%3E';
