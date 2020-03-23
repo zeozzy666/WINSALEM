@@ -58,7 +58,7 @@ try
         newAddressModel.setAuditID(currentUserID);
         newAddressModel.setPrimaryFlag("Y"); 
         newAddressModel.setStreetName(addressObj.get("StreetName"));
-        newAddressModel.setStreetNameStart(addressObj.get("StreetNumber"));
+        newAddressModel.setHouseNumberStart(Number(addressObj.get("StreetNumber")));
         if (!isBlank(addressObj.get("StreetType")))
             newAddressModel.setAddressType(addressObj.get("StreetType"));
         if (!isBlank(addressObj.get("Suffix")))
@@ -75,7 +75,52 @@ try
             newAddressModel.setZip(addressObj.get("ZipCode"));
         //create the cap address
         createCapAddress(capId, newAddressModel);
+
+        //create owner
+        if (!isBlank(ownersObj))
+        {
+          var o = aa.owner.getCapOwnerScriptModel().getOutput();
+          if (!isBlank(ownersObj.get("FullName")))
+            o.setOwnerFullName(ownersObj.get("FullName"));
+          if (!isBlank(ownersObj.get("Email")))
+            o.setEmail(ownersObj.get("Email"));
+          if (!isBlank(ownersObj.get("AddressL2")))
+            o.setPrimaryOwner(ownersObj.get("AddressL2"));
+          if (!isBlank(ownersObj.get("City")))
+            o.setMailCity(ownersObj.get("City"));
+          if (!isBlank(ownersObj.get("State")))
+            o.setMailState(ownersObj.get("State"));
+          if (!isBlank(ownersObj.get("Zip")))
+            o.setMailZip(ownersObj.get("Zip"));
+          if (!isBlank(ownersObj.get("AddressL1")))
+            o.setMailAddress1(ownersObj.get("AddressL1"));
+          if (!isBlank(ownersObj.get("AddressL2")))
+            o.setMailAddress2(ownersObj.get("AddressL2"));
+          o.setCapID(capId);
+          var success = aa.owner.createCapOwnerWithAPOAttribute(o);
+        }
+        //create parcel
+        if (!isBlank(parcelObj))
+        {
+          var capParcel = new com.accela.aa.aamain.parcel.CapParcelModel();
+          var parcelModel = new com.accela.aa.aamain.parcel.ParcelModel();
+          capParcel.setCapIDModel(capId);
+          if (!isBlank(parcelObj.get("ParcelNum")))
+            capParcel.setParcelNo(parcelObj.get("ParcelNum"));
+          if (!isBlank(parcelObj.get("Block")))
+            parcelModel.setBlock(parcelObj.get("Block"));
+          if (!isBlank(parcelObj.get("Lot")))
+            parcelModel.setLot(parcelObj.get("Lot"));
+          capParcel.setParcelModel(parcelModel);
+          var createPMResult = aa.parcel.createCapParcel(capParcel);                           
+          if (createPMResult.getSuccess())
+            addMessage("Successfully created parcel for " + capId.getCustomID());
+          else
+            addMessage("Problem when creating parcel for " + capId.getCustomID() + ": " + createPMResult.getErrorMessage());
+        }
        }
+       //schedule initial investigation
+       scheduleInspection("Initial Investigation", 1);
    }
 }
 catch (err) 
@@ -111,6 +156,8 @@ function doInputValidation()
             { addMessage("AddressObj.StreetNumber is required"); isPass = false; }
         if (isBlank(addressObj.get("StreetName")))
             { addMessage("AddressObj.StreetName is required"); isPass = false; }
+        if (!Number(addressObj.get("StreetNumber")))
+            { addMessage("StreetNumber has to be numerical"); isPass = false; }
     }
     return isPass;
 }
