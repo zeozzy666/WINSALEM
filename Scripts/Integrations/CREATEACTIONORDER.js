@@ -8,6 +8,7 @@ var debug = "";
 var br = "<BR>"
 var AInfo = new Array();
 var useAppSpecificGroupName = false;
+var enableLogging = aa.env.getValue("enableLogging");
 try
 {        
     eval(getScriptText("INCLUDES_ACCELA_FUNCTIONS", null, true));
@@ -28,7 +29,7 @@ try
    var addressID = aa.env.getValue("AddressID");
    var addressObj = aa.env.getValue("AddressObj");
    var ownersObj = aa.env.getValue("OwnersObj");
-   var parcelObj = aa.env.getValue("ParcelObj");
+   var parcelObj = aa.env.getValue("ParcelObj");   
 
    //validate inputs
    var isValidInput = doInputValidation();
@@ -83,9 +84,7 @@ try
           if (!isBlank(ownersObj.get("FullName")))
             o.setOwnerFullName(ownersObj.get("FullName"));
           if (!isBlank(ownersObj.get("Email")))
-            o.setEmail(ownersObj.get("Email"));
-          if (!isBlank(ownersObj.get("AddressL2")))
-            o.setPrimaryOwner(ownersObj.get("AddressL2"));
+            o.setEmail(ownersObj.get("Email"));            
           if (!isBlank(ownersObj.get("City")))
             o.setMailCity(ownersObj.get("City"));
           if (!isBlank(ownersObj.get("State")))
@@ -97,7 +96,12 @@ try
           if (!isBlank(ownersObj.get("AddressL2")))
             o.setMailAddress2(ownersObj.get("AddressL2"));
           o.setCapID(capId);
+          o.setPrimaryOwner("Y");
           var success = aa.owner.createCapOwnerWithAPOAttribute(o);
+          if (success.getSuccess())
+            logInfo("Successfully created owner for " + capId.getCustomID());
+          else
+            addMessage("Problem when creating owner for " + capId.getCustomID() + ": " + success.getErrorMessage());          
         }
         //create parcel
         if (!isBlank(parcelObj))
@@ -114,7 +118,7 @@ try
           capParcel.setParcelModel(parcelModel);
           var createPMResult = aa.parcel.createCapParcel(capParcel);                           
           if (createPMResult.getSuccess())
-            addMessage("Successfully created parcel for " + capId.getCustomID());
+            logInfo("Successfully created parcel for " + capId.getCustomID());
           else
             addMessage("Problem when creating parcel for " + capId.getCustomID() + ": " + createPMResult.getErrorMessage());
         }
@@ -160,6 +164,11 @@ function doInputValidation()
             { addMessage("StreetNumber has to be numerical"); isPass = false; }
     }
     return isPass;
+}
+function logInfo(str)
+{
+  if (enableLogging == true)
+    addMessage(str);
 }
 function addMessage(str)
 {

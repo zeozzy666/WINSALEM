@@ -7,6 +7,8 @@ var debug = "";
 var br = "<BR>"
 var AInfo = new Array();
 var useAppSpecificGroupName = false;
+var enableLogging = aa.env.getValue("enableLogging");
+
 try
 {        
     eval(getScriptText("INCLUDES_ACCELA_FUNCTIONS", null, true));
@@ -23,8 +25,8 @@ try
    if (capId)
    {
     result.status = getAppStatus();
-    var cases = getChildren("Enforcement/*/*/*");
-    if (cases.length >= 0)
+    var cases = getChildren("Enforcement/*/*/*") || new Array();
+    if (cases.length > 0)
     {
       result.caseNumber = cases[0].getCustomID();
     }
@@ -46,6 +48,11 @@ finally
 	  result.messages = messages;    
     aa.env.setValue("returnCode", "1");
     aa.env.setValue("result", result);    
+}
+function logInfo(str)
+{
+  if (enableLogging == true)
+    addMessage(str);
 }
 function addMessage(str)
 {

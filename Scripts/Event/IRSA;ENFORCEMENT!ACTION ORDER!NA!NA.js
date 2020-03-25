@@ -13,8 +13,14 @@ if (recordType)
 	copyASITables(capId, newCap);
 	//create follow up inspection
 	scheduleInspect(newCap, "Follow-Up Investigation", 14);
-	//result first step in workflow
-	resultWorkflowTask("Intake", "Assigned", "Updated via IRSA", "");
+	//Update workflow
+	if ("No Violation".equals(inspResult))
+		resultWorkflowTask("Initial Investigation", "No Violation", "Updated via IRSA", "");
+	else if ("Inspection Warrant".equals(inspResult))
+		resultWorkflowTask("Initial Investigation", "Request Inspection Warrant", "Updated via IRSA", "");
+	else
+		resultWorkflowTask("Initial Investigation", "In Violation", "Updated via IRSA", "");
+
 	//link as child to AO
 	var linkResult = aa.cap.createAppHierarchy(capId, newCap);
 	if (linkResult.getSuccess())
