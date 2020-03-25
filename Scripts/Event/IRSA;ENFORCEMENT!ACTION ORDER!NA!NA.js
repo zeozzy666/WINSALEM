@@ -13,6 +13,8 @@ if (recordType)
 	copyASITables(capId, newCap);
 	//create follow up inspection
 	scheduleInspect(newCap, "Follow-Up Investigation", 14);
+	//Create GIS object
+	copyParcelGisObjects(newCap);
 	//update gis info
 	updateGISCapInfo(newCap);
 	//Update workflow

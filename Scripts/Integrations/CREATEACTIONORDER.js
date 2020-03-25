@@ -125,6 +125,8 @@ try
        }
        //schedule initial investigation
        scheduleInspection("Initial Investigation", 1);
+       //create GIS Object
+       copyParcelGisObjects();
    }
 }
 catch (err) 
