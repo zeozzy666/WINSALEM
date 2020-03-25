@@ -13,6 +13,8 @@ if (recordType)
 	copyASITables(capId, newCap);
 	//create follow up inspection
 	scheduleInspect(newCap, "Follow-Up Investigation", 14);
+	//update gis info
+	updateGISCapInfo(newCap);
 	//Update workflow
 	if ("No Violation".equals(inspResult))
 		resultWorkflowTask("Initial Investigation", "No Violation", "Updated via IRSA", "");
