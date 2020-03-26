@@ -52,3 +52,11 @@ else if ("Council Approval".equals(wfTask) && "Approved".equals(wfStatus))
 	else
 		logDebug( "**ERROR: linking to parent application parent cap " + linkResult.getErrorMessage());		
 }
+else if ("Close Action Order".equals(wfTask) && "Closed".equals(wfStatus))
+{
+	var aOrder = getParent();
+	if (aOrder)
+	{
+		resultWorkflowTask("Case", "Closed", "Updated via WTUA", "", null, aOrder);
+	}
+}
