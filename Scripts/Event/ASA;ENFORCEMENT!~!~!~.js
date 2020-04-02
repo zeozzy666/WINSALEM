@@ -6,3 +6,5 @@ else
 {
 	scheduleInspection("Initial Investigation", 1);
 }
+//update GIS info
+updateGISCapInfo();

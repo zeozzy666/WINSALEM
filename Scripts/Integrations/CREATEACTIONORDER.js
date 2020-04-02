@@ -49,6 +49,39 @@ try
        //if AddressID is provided then get APO from GIS
        if (!isBlank(addressID))
        {
+        var gisAddressObject = aa.gis.getGISObjectDetails("WINSALEM", "Address Points", addressID).getOutput();
+        if (gisAddressObject.GISObjects.length == 0)
+        {
+          addMessage("Could not find addressID: " + addressID);
+        }
+        else
+        {
+          var stName = getGISInfoByObject("WINSALEM", "Address Points", "STNAME", gisAddressObject);
+          var hsNum = getGISInfoByObject("WINSALEM", "Address Points", "ADDRNUM", gisAddressObject);
+          var city = ""; //getGISInfoByObject("WINSALEM", "Address Points", "PIN", gisAddressObject);
+          var unit = getGISInfoByObject("WINSALEM", "Address Points", "UNIT", gisAddressObject);
+          var searchRefAddressModel = aa.proxyInvoker.newInstance("com.accela.aa.aamain.address.RefAddressModel").getOutput();
+          searchRefAddressModel.setStreetName(stName);
+          searchRefAddressModel.setHouseNumberStart(Number(hsNum));
+          searchRefAddressModel.setCity(city);
+          searchRefAddressModel.setUnitStart(unit);
+
+          //Look up the refAddressModel.
+          var searchResult = aa.address.getRefAddressByServiceProviderRefAddressModel(searchRefAddressModel).getOutput();
+          if (searchResult.length > 0)
+          {
+            var addressModel = fillAddressModel(searchResult[0]);
+            createCapAddress(capId, addressModel);
+            var pracelNum = getGISInfoByObject("WINSALEM", "Parcels", "PIN", gisAddressObject);
+            addParcelFromRef(pracelNum);
+            refreshParcelAndOwnerInfo(capId);
+            //schedule initial investigation
+            scheduleInspection("Initial Investigation", 1);
+            //create GIS object
+            copyParcelGisObjects();             
+          }       
+                    
+        }
 
        }
        else
@@ -122,11 +155,11 @@ try
           else
             addMessage("Problem when creating parcel for " + capId.getCustomID() + ": " + createPMResult.getErrorMessage());
         }
-       }
        //schedule initial investigation
        scheduleInspection("Initial Investigation", 1);
        //create GIS Object
-       copyParcelGisObjects();
+       copyParcelGisObjects();        
+       }
    }
 }
 catch (err) 

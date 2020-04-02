@@ -39,10 +39,10 @@ try
         thisFeeItem.totalCost = thisRecord["GF_FEE"] ? thisRecord["GF_FEE"] : "";
         thisFeeItem.feeSeq = thisRecord["FEEITEM_SEQ_NBR"] ? thisRecord["FEEITEM_SEQ_NBR"] : "";
         thisFeeItem.caseCloseDate  = getCloseDate();
-        thisFeeItem.Area = "";
-        thisFeeItem.Pin = "";
-        thisFeeItem.Block = "";
-        thisFeeItem.Lot = "";
+        thisFeeItem.Area = getGISInfo("WINSALEM", "Wards", "Ward") || "";
+        thisFeeItem.Pin = getGISInfo("WINSALEM", "Parcels", "PIN") || "";
+        thisFeeItem.Block = getGISInfo("WINSALEM", "Parcels", "BLK") || "";
+        thisFeeItem.Lot = getGISInfo("WINSALEM", "Parcels", "LOT") || "";
         thisFeeItem.location = "";
         thisFeeItem.chargeType = "";
         thisFeeItem.chargeCode = thisRecord["GF_L1"] ? thisRecord["GF_L1"] : "";

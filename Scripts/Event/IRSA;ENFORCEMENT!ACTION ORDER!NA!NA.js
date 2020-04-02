@@ -20,7 +20,7 @@ if (recordType)
 	//Update workflow
 	if ("No Violation".equals(inspResult))
 		resultWorkflowTask("Initial Investigation", "No Violation", "Updated via IRSA", "");
-	else if ("Inspection Warrant".equals(inspResult))
+	else if ("Request Inspection Warrant".equals(inspResult))
 		resultWorkflowTask("Initial Investigation", "Request Inspection Warrant", "Updated via IRSA", "");
 	else
 		resultWorkflowTask("Initial Investigation", "In Violation", "Updated via IRSA", "");
