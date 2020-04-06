@@ -22,3 +22,8 @@ if (matches(inspResult, "Pass", "Fail") || true)
 		addASITable("VIOLATIONS", vTable);
 	}
 }
+var workflowStatus = lookup("WINSALEM_SETTINGS_INSPXWORKLOW", inspResult);
+if (!isBlank(workflowStatus))
+{
+	resultWorkflowTask("Follow-Up Investigation", workflowStatus, "Updated via IRSA", "");
+}
