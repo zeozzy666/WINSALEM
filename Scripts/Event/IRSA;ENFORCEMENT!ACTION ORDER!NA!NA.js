@@ -17,6 +17,11 @@ if (recordType)
 	copyParcelGisObjects(newCap);
 	//update gis info
 	updateGISCapInfo(newCap);
+	//assign new cap
+	var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
+	var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
+	if (accelaInspector)
+		assignCap(accelaInspector);
 	//Update workflow
 	if ("No Violation".equals(inspResult))
 		resultWorkflowTask("Initial Investigation", "No Violation", "Updated via IRSA", "");
