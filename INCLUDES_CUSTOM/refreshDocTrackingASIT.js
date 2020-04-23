@@ -51,8 +51,9 @@ function refreshDocTrackingASIT()
 				{
 					var mpSuffix = getNode(xml, "MPSUFFIX");
 					var mpDate = getNode(xml, "MPDATE");
-					requestMailPoD(trackId, mpSuffix, mpDate, USPSTRACKING[x]["POD Email"]);
+					requestMailPoD(trackId, mpSuffix, mpDate, USPSTRACKING[x]["POD Email"] + "");
 					USPSTRACKING[x]["Request POD"] = "UNCHECKED";
+					USPSTRACKING[x]["POD Email"] = "";
 				}
 				removeASITable("USPS TRACKING");
 				addASITable("USPS TRACKING", USPSTRACKING);
