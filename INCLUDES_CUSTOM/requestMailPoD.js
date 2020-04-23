@@ -1,9 +1,11 @@
 function requestMailPoD(trackId, mpSuffix, mpDate)
 {
+	var email = lookup_noLog(settings, "POD_EMAIL");
+	if (arguments.length > 3 && arguments[3])
+		email = arguments[3];
 	var settings = "WINSALEM_SETTINGS_USPS"
 	var userId = lookup_noLog(settings, "USER_ID");
-	var uri = lookup_noLog(settings, 'POD_URI');
-	var email = lookup_noLog(settings, "POD_EMAIL");
+	var uri = lookup_noLog(settings, 'POD_URI');	
 	var fName = lookup_noLog(settings, "POD_FNAME");
 	var lName = lookup_noLog(settings, "POD_LNAME");
 	//For Testing
