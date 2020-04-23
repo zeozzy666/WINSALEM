@@ -41,7 +41,7 @@ function refreshDocTrackingASIT()
 				USPSTRACKING[x]["Status"] = status;
 				USPSTRACKING[x]["Status Date"] = statusDate;
 				USPSTRACKING[x]["Status Time"] = statusTime;
-				USPSTRACKING[x]["Ship Date/Time"] = shipDateTime;
+				USPSTRACKING[x]["Ship Date/Time"] = shipDateTime.substring(0, shipDateTime.indexOf(".000000"));
 				USPSTRACKING[x]["Status Description"] = statusDesc;
 				USPSTRACKING[x]["Mailing Address"] = address;
 
