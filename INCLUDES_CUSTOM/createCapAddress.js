@@ -1,5 +1,6 @@
 function createCapAddress(targetCapID, addressModel)
 {
+	//addressModel = new com.accela.aa.aamain.address.AddressModel();
 	//prevent target CAP from having more than 1 primary address
 	var priAddrExists = hasPrimaryAddressInCap(targetCapID);
 	if (priAddrExists)
