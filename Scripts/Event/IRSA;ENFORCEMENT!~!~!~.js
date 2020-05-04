@@ -1,4 +1,9 @@
-if (matches(inspResult, "Pass", "Fail") || true)
+if (matches(inspResult, "Pass", "In Compliance"))
+{
+	removeASITable("VIOLATIONS");
+	addASITable("VIOLATIONS", vTable);
+}
+else
 {
 	var gsItems = getGuideSheetObjects(inspId);
 	var vTable = loadASITable("VIOLATIONS") || new Array();
