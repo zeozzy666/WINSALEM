@@ -14,7 +14,7 @@ if (recordType)
 	//create follow up inspection
 	var newInspId = scheduleInspect(newCap, "Follow-Up Investigation", 14);
 	//Copy failed GSIs
-	copyFailedGSItems(inspId, newInspId);
+	copyFailedGuidesheetItems(capId, inspId, newCap, newInspId);
 	//Create GIS object
 	copyParcelGisObjects(newCap);
 	//update gis info
