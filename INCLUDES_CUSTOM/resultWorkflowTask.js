@@ -3,7 +3,7 @@ function resultWorkflowTask(wfstr, wfstat, wfcomment, wfnote) // optional proces
 	var useProcess = false;
 	var processName = "";
 	var itemCap = capId;
-	if (arguments.length > 4) {
+	if (arguments.length > 4 && arguments[4]) {
 		processName = arguments[4]; // subprocess
 		useProcess = true;
 	}
