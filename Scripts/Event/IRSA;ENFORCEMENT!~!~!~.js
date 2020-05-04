@@ -1,7 +1,6 @@
 if (matches(inspResult, "Pass", "In Compliance"))
 {
 	removeASITable("VIOLATIONS");
-	addASITable("VIOLATIONS", vTable);
 }
 else
 {
