@@ -12,7 +12,9 @@ if (recordType)
 	//copy ASIT
 	copyASITables(capId, newCap);
 	//create follow up inspection
-	scheduleInspect(newCap, "Follow-Up Investigation", 14);
+	var newInspId = scheduleInspect(newCap, "Follow-Up Investigation", 14);
+	//Copy failed GSIs
+	copyFailedGSItems(inspId, newInspId);
 	//Create GIS object
 	copyParcelGisObjects(newCap);
 	//update gis info
