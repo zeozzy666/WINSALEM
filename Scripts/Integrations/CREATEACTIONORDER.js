@@ -49,6 +49,8 @@ try
        //if AddressID is provided then get APO from GIS
        if (!isBlank(addressID))
        {
+         //first add address GIS object
+        addGISObject("WINSALEM", "Address Points", addressID);
         var gisAddressObject = aa.gis.getGISObjectDetails("WINSALEM", "Address Points", addressID).getOutput();
         if (gisAddressObject.GISObjects.length == 0)
         {
