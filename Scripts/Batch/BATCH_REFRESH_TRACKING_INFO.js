@@ -1,41 +1,22 @@
+//#region Load Environment
 var SCRIPT_VERSION = "3.0";
 var BATCH_NAME = "";
 eval(getScriptText("INCLUDES_ACCELA_FUNCTIONS", null, true));
 eval(getScriptText("INCLUDES_ACCELA_GLOBALS", null, true));
 eval(getScriptText("INCLUDES_CUSTOM", null, true));
 var currentUserID = "ADMIN";
-function getScriptText(vScriptName, servProvCode, useProductScripts) {
-    if (!servProvCode)
-        servProvCode = aa.getServiceProviderCode();
-    vScriptName = vScriptName.toUpperCase();
-    var emseBiz = aa.proxyInvoker.newInstance("com.accela.aa.emse.emse.EMSEBusiness").getOutput();
-    try {
-        if (useProductScripts) {
-            var emseScript = emseBiz.getMasterScript(aa.getServiceProviderCode(), vScriptName);
-        } else {
-            var emseScript = emseBiz.getScriptByPK(aa.getServiceProviderCode(), vScriptName, "ADMIN");
-        }
-        return emseScript.getScriptText() + "";
-    } catch (err) {
-        return "";
-    }
-}
-logMessage = function (etype, edesc) {
-    aa.print(etype + " : " + edesc);
-}
-logDebug = function (edesc) {
-    if (showDebug) {
-        aa.print("DEBUG : " + edesc);
-    }
-}
-/*------------------------------------ USER PARAMETERS ---------------------------------------*/
-var appType = aa.env.getValue("Record");
-var status2Skip = aa.env.getValue("Status2Skip");
-//TESTING
-//appType = "Enforcement/*/*/*";
-//status2Skip = "Closed";
-/*------------------------------------ END OF USER PARAMETERS --------------------------------*/
+//#endregion
 
+//#region Batch Parameters
+var pTargetDate = aa.env.getValue("Target Date");
+//#endregion
+
+//#region Parameters for TESTING
+// appType = "Enforcement/*/*/*";
+// status2Skip = "Closed";
+//#endregion
+
+//#region Batch Globals
 var showDebug = true; // Set to true to see debug messages
 var maxSeconds = 5 * 60; // number of seconds allowed for batch processing,
 // usually < 5*60
@@ -48,11 +29,21 @@ var systemUserObj = aa.person.getUser("ADMIN").getOutput();
 var servProvCode = aa.getServiceProviderCode();
 var capId = null;
 var altId = "";
+logMessage = function (etype, edesc) {
+    aa.print(etype + " : " + edesc);
+}
+logDebug = function (edesc) {
+    if (showDebug) {
+        aa.print("DEBUG : " + edesc);
+    }
+}
+//#endregion
 
 logMessage("START", "Start of Job");
 if (!timeExpired) mainProcess();
 logMessage("END", "End of Job: Elapsed Time : " + elapsed() + " Seconds");
 
+//#region Main
 function mainProcess() {
     var capIDListOutput,
     capIDList = new Array(),
@@ -79,38 +70,69 @@ function mainProcess() {
         var capStatus = getAppStatus(capId) || "";
         if (exists(capStatus, status2SkipArray) || capStatus.indexOf("Close") >= 0)
             { logDebug(altId + ": " + capStatus + " is a skip status, skipping..."); continue; }
-        var docs = getDocumentList();
-        for (var d in docs)
-        {
-            var thisDoc = docs[d];
-            var thisDocSeq = thisDoc.getDocumentNo();
-            var thisTrackingStatus = getDocCustomField(thisDocSeq, "Status");
-            //refresh tracking info if not delivered
-            if (!matches(thisTrackingStatus, "Delivered"))
-                var success = refreshDocTracking(thisDocSeq, true);
-        }
+        //refresh tracking
+        refreshDocTrackingASIT(capId);
+
     }
 
 }
+//#endregion
 
+//#region Private Functions
 function elapsed() {
     var thisDate = new Date();
     var thisTime = thisDate.getTime();
     return ((thisTime - startTime) / 1000)
 }
+ function getRecords()
+ {
+    var sql = "SELECT DISTINCT B1_ALT_ID FROM B1PERMIT B INNER JOIN BAPPSPECTABLE_VALUE ASIT ON ASIT.SERV_PROV_CODE = B.SERV_PROV_CODE AND ASIT.B1_PER_ID1 = B.B1_PER_ID1 AND ASIT.B1_PER_ID2 = B.B1_PER_ID2 AND ASIT.B1_PER_ID3 = B.B1_PER_ID3 WHERE ASIT.TABLE_NAME = 'HOURS' AND B.SERV_PROV_CODE = 'ABRA'";
+    var array = new Array();
+    try {
+        var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
+        var ds = initialContext.lookup("java:/AA");
+        var conn = ds.getConnection();
+        var sStmt = conn.prepareStatement(sql);
+        var rSet = sStmt.executeQuery();
+       while (rSet.next()) {
+            var obj = {};
+            var md = rSet.getMetaData();
+            var columns = md.getColumnCount();
+            for (i = 1; i <= columns; i++) {
+                var thiscapId = aa.cap.getCapID(String(rSet.getString(md.getColumnName(i)))).getOutput();
+                array.push(thiscapId);
+            }
+        }
 
-function sendMail(from, to, cc, templateName, params, fileNames)
-{
-    // var fileNames = [];
-    var result = aa.document.sendEmailByTemplateName(from, to, cc, templateName, params, fileNames);
-    if(result.getSuccess())
-    {
-        aa.print("Send mail success.");
+        return array;
+
+    } catch (err) {
+        aa.print(err.message);
+    }    
+    finally
+    {   
+        if (rSet)
+            rSet.close();
+        if (sStmt)
+            sStmt.close();
+        if (conn)
+            conn.close();        
     }
-    else
-    {
-        aa.print("Send mail fail.");
+ }
+function getScriptText(vScriptName, servProvCode, useProductScripts) {
+    if (!servProvCode)
+        servProvCode = aa.getServiceProviderCode();
+    vScriptName = vScriptName.toUpperCase();
+    var emseBiz = aa.proxyInvoker.newInstance("com.accela.aa.emse.emse.EMSEBusiness").getOutput();
+    try {
+        if (useProductScripts) {
+            var emseScript = emseBiz.getMasterScript(aa.getServiceProviderCode(), vScriptName);
+        } else {
+            var emseScript = emseBiz.getScriptByPK(aa.getServiceProviderCode(), vScriptName, "ADMIN");
+        }
+        return emseScript.getScriptText() + "";
+    } catch (err) {
+        return "";
     }
 }
-
- 
+//#endregion

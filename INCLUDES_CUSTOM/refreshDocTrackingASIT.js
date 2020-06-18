@@ -6,10 +6,12 @@ function refreshDocTrackingASIT()
 	{
         itemCap = arguments[0];    
 		USPSTable = loadASITable("USPS TRACKING", itemCap);
+		altId = itemCap.getCustomID();
     }
     else
     {
-        USPSTable = USPSTRACKING;
+		USPSTable = USPSTRACKING;
+		altId = capIDString;
     }
 		
 	var settings = "WINSALEM_SETTINGS_USPS"	
