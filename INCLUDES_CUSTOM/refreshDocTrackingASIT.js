@@ -3,8 +3,8 @@ function refreshDocTrackingASIT()
 	var itemCap = capId;
 	if (arguments.length > 0)
 	{
-		itemcap = arguments[0];
-		var USPSTRACKING = loadASITable("USPS TRACKING", itemcap);
+		itemCap = arguments[0];
+		var USPSTRACKING = loadASITable("USPS TRACKING", itemCap);
 	}
 		
 	var settings = "WINSALEM_SETTINGS_USPS"	
