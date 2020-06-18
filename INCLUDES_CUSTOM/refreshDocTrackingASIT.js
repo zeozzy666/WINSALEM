@@ -1,5 +1,12 @@
 function refreshDocTrackingASIT()
 {
+	var itemCap = capId;
+	if (arguments.length > 0)
+	{
+		itemcap = arguments[0];
+		var USPSTRACKING = loadASITable("USPS TRACKING", itemcap);
+	}
+		
 	var settings = "WINSALEM_SETTINGS_USPS"	
 	var userId = lookup_noLog(settings, "USER_ID");
 	var uri = lookup_noLog(settings, 'TRACK_URI');
