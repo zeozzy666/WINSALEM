@@ -86,7 +86,7 @@ function elapsed() {
 }
  function getRecords()
  {
-    var sql = "SELECT DISTINCT B1_ALT_ID FROM B1PERMIT B INNER JOIN BAPPSPECTABLE_VALUE ASIT ON ASIT.SERV_PROV_CODE = B.SERV_PROV_CODE AND ASIT.B1_PER_ID1 = B.B1_PER_ID1 AND ASIT.B1_PER_ID2 = B.B1_PER_ID2 AND ASIT.B1_PER_ID3 = B.B1_PER_ID3 WHERE ASIT.TABLE_NAME = 'HOURS' AND B.SERV_PROV_CODE = 'ABRA'";
+    var sql = "";
     var array = new Array();
     try {
         var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
