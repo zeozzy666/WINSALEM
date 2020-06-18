@@ -1,11 +1,16 @@
 function refreshDocTrackingASIT()
 {
 	var itemCap = capId;
+    var USPSTable = new Array();
 	if (arguments.length > 0)
 	{
-		itemCap = arguments[0];
-		var USPSTRACKING = loadASITable("USPS TRACKING", itemCap);
-	}
+        itemCap = arguments[0];    
+		USPSTable = loadASITable("USPS TRACKING", itemCap);
+    }
+    else
+    {
+        USPSTable = USPSTRACKING;
+    }
 		
 	var settings = "WINSALEM_SETTINGS_USPS"	
 	var userId = lookup_noLog(settings, "USER_ID");
@@ -14,9 +19,9 @@ function refreshDocTrackingASIT()
 	//var userId = "645ACCEL3857";
 	//var uri = 'http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML=%3CTrackFieldRequest%20USERID=%22$$USERID$$%22%3E%3CRevision%3E1%3C/Revision%3E%3CClientIp%3E127.0.0.1%3C/ClientIp%3E%3CSourceId%3EUSPSTOOLS%3C/SourceId%3E%3CTrackID%20ID=%22$$TRACKID$$%22/%3E%3C/TrackFieldRequest%3E';
 	//var trackId = "9171999991703934968445";
-	for (var x in USPSTRACKING)
+	for (var x in USPSTable)
 	{
-		var trackId = USPSTRACKING[x]["Tracking Number"] + "";
+		var trackId = USPSTable[x]["Tracking Number"] + "";
 		if (trackId && trackId.length > 0)
 		{
 			var thisUri = uri;
@@ -45,25 +50,25 @@ function refreshDocTrackingASIT()
 				var toZip = getNode(xml, "DestinationZip");
 				var address = toCity + ", " + toState + ", " + toZip;
 
-				USPSTRACKING[x]["Status"] = status;
-				USPSTRACKING[x]["Status Date"] = statusDate;
-				USPSTRACKING[x]["Status Time"] = statusTime;
-				USPSTRACKING[x]["Ship Date/Time"] = shipDateTime.substring(0, shipDateTime.indexOf(".000000"));
-				USPSTRACKING[x]["Status Description"] = statusDesc;
-				USPSTRACKING[x]["Mailing Address"] = address;
+				USPSTable[x]["Status"] = status;
+				USPSTable[x]["Status Date"] = statusDate;
+				USPSTable[x]["Status Time"] = statusTime;
+				USPSTable[x]["Ship Date/Time"] = shipDateTime.substring(0, shipDateTime.indexOf(".000000"));
+				USPSTable[x]["Status Description"] = statusDesc;
+				USPSTable[x]["Mailing Address"] = address;
 
 				logDebug(capIDString + ": Successfully refreshed tracking info");
 
-				if ("CHECKED".equals(USPSTRACKING[x]["Request POD"]))
+				if ("CHECKED".equals(USPSTable[x]["Request POD"]))
 				{
 					var mpSuffix = getNode(xml, "MPSUFFIX");
 					var mpDate = getNode(xml, "MPDATE");
-					requestMailPoD(trackId, mpSuffix, mpDate, USPSTRACKING[x]["POD Email"] + "");
-					USPSTRACKING[x]["Request POD"] = "UNCHECKED";
-					USPSTRACKING[x]["POD Email"] = "";
+					requestMailPoD(trackId, mpSuffix, mpDate, USPSTable[x]["POD Email"] + "");
+					USPSTable[x]["Request POD"] = "UNCHECKED";
+					USPSTable[x]["POD Email"] = "";
 				}
-				removeASITable("USPS TRACKING");
-				addASITable("USPS TRACKING", USPSTRACKING);
+				removeASITable("USPS TRACKING", itemCap);
+				addASITable("USPS TRACKING", USPSTable, itemCap);
 			}
 			else
 				{ logDebug(capIDString + ": Problem while trying to retrieve tracking info: " + r.getErrorMessage()); continue; }
