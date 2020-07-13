@@ -62,9 +62,9 @@ function refreshDocTrackingASIT()
 				{
 					USPSTable[x]["Unclaimed"] = "CHECKED";
 				}
-				if (xml.contains("<EventCode>2700</EventCode>"))
+				if (xml.contains("<EventCode>04</EventCode>"))
 				{
-					USPSTable[x]["Rejected"] = "CHECKED";
+					USPSTable[x]["Refused"] = "CHECKED";
 				}
 
 				logDebug(capIDString + ": Successfully refreshed tracking info");
