@@ -58,6 +58,14 @@ function refreshDocTrackingASIT()
 				USPSTable[x]["Ship Date/Time"] = shipDateTime.substring(0, shipDateTime.indexOf(".000000"));
 				USPSTable[x]["Status Description"] = statusDesc;
 				USPSTable[x]["Mailing Address"] = address;
+				if (xml.contains("<EventCode>27</EventCode>"))
+				{
+					USPSTable[x]["Unclaimed"] = "CHECKED";
+				}
+				if (xml.contains("<EventCode>2700</EventCode>"))
+				{
+					USPSTable[x]["Rejected"] = "CHECKED";
+				}
 
 				logDebug(capIDString + ": Successfully refreshed tracking info");
 
