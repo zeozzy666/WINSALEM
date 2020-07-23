@@ -19,6 +19,8 @@ if (recordType)
 	copyParcelGisObjects(newCap);
 	//update gis info
 	updateGISCapInfo(newCap);
+	//copy contacts
+	copyContacts(capId, newCap);
 	//assign new cap
 	var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
 	var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
