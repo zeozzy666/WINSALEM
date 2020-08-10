@@ -60,7 +60,7 @@ finally
 {
 	result.message = message;
     result.invoicedFeeItemsArray = invoicedFeeItemsArray;
-    aa.env.setValue("returnCode", "1");
+    //aa.env.setValue("returnCode", "1");
     aa.env.setValue("result", result);
 }
 
@@ -68,16 +68,16 @@ function getRecords(fDate, tDate)
 {
 	fDate = aa.util.formatDate(new Date(fDate), "MM/dd/YYYY");
 	tDate = aa.util.formatDate(new Date(tDate), "MM/dd/YYYY");
-    var sql = "SELECT B.B1_ALT_ID, O.B1_OWNER_FNAME, O.B1_OWNER_FULL_NAME, O.B1_OWNER_LNAME, O.B1_CITY, O.B1_STATE, O.B1_ZIP, I.INVOICE_DATE, F.FEEITEM_SEQ_NBR, F.GF_DES, F.GF_L1, F.GF_L2, F.GF_L3, F.GF_FEE  FROM B1PERMIT B  LEFT JOIN B3OWNERS O ON B.B1_PER_ID1 = O.B1_PER_ID1 AND B.B1_PER_ID2 = O.B1_PER_ID2 AND B.B1_PER_ID3 = O.B1_PER_ID3 AND B.SERV_PROV_CODE = O.SERV_PROV_CODE LEFT JOIN B3PARCEL P ON B.B1_PER_ID1 = P.B1_PER_ID1 AND B.B1_PER_ID2 = P.B1_PER_ID2 AND B.B1_PER_ID3 = P.B1_PER_ID3 AND B.SERV_PROV_CODE = P.SERV_PROV_CODE LEFT JOIN B3ADDRES A ON B.B1_PER_ID1 = A.B1_PER_ID1 AND B.B1_PER_ID2 = A.B1_PER_ID2 AND B.B1_PER_ID3 = A.B1_PER_ID3 AND B.SERV_PROV_CODE = A.SERV_PROV_CODE INNER JOIN  X4FEEITEM_INVOICE X ON B.B1_PER_ID1 = X.B1_PER_ID1 AND B.B1_PER_ID2 = X.B1_PER_ID2 AND B.B1_PER_ID3 = X.B1_PER_ID3 AND B.SERV_PROV_CODE = X.SERV_PROV_CODE INNER JOIN F4FEEITEM F ON B.B1_PER_ID1 = F.B1_PER_ID1 AND B.B1_PER_ID2 = F.B1_PER_ID2 AND B.B1_PER_ID3 = F.B1_PER_ID3 AND B.SERV_PROV_CODE = F.SERV_PROV_CODE AND F.GF_ITEM_STATUS_FLAG = 'INVOICED' INNER JOIN  F4INVOICE I ON I.INVOICE_NBR = X.INVOICE_NBR AND X.SERV_PROV_CODE = X.SERV_PROV_CODE WHERE B.SERV_PROV_CODE = 'WINSALEM'  AND I.INVOICE_DATE >= TO_DATE('$$fDate$$','MM-dd-YYYY') AND I.INVOICE_DATE <= TO_DATE('$$tDate$$','MM-dd-YYYY') --AND I.INVOICE_DATE >= TO_DATE('01/01/2010','MM-dd-YYYY') AND I.INVOICE_DATE <= TO_DATE('01/30/2010','MM-dd-YYYY')";
+    var sql = "SELECT B.B1_ALT_ID, O.B1_OWNER_FNAME, O.B1_OWNER_FULL_NAME, O.B1_OWNER_LNAME, O.B1_CITY, O.B1_STATE, O.B1_ZIP, I.INVOICE_DATE, F.FEEITEM_SEQ_NBR, F.GF_DES, F.GF_L1, F.GF_L2, F.GF_L3, F.GF_FEE  FROM dbo.B1PERMIT B  LEFT JOIN dbo.B3OWNERS O ON B.B1_PER_ID1 = O.B1_PER_ID1 AND B.B1_PER_ID2 = O.B1_PER_ID2 AND B.B1_PER_ID3 = O.B1_PER_ID3 AND B.SERV_PROV_CODE = O.SERV_PROV_CODE LEFT JOIN dbo.B3PARCEL P ON B.B1_PER_ID1 = P.B1_PER_ID1 AND B.B1_PER_ID2 = P.B1_PER_ID2 AND B.B1_PER_ID3 = P.B1_PER_ID3 AND B.SERV_PROV_CODE = P.SERV_PROV_CODE LEFT JOIN dbo.B3ADDRES A ON B.B1_PER_ID1 = A.B1_PER_ID1 AND B.B1_PER_ID2 = A.B1_PER_ID2 AND B.B1_PER_ID3 = A.B1_PER_ID3 AND B.SERV_PROV_CODE = A.SERV_PROV_CODE INNER JOIN  dbo.X4FEEITEM_INVOICE X ON B.B1_PER_ID1 = X.B1_PER_ID1 AND B.B1_PER_ID2 = X.B1_PER_ID2 AND B.B1_PER_ID3 = X.B1_PER_ID3 AND B.SERV_PROV_CODE = X.SERV_PROV_CODE INNER JOIN dbo.F4FEEITEM F ON B.B1_PER_ID1 = F.B1_PER_ID1 AND B.B1_PER_ID2 = F.B1_PER_ID2 AND B.B1_PER_ID3 = F.B1_PER_ID3 AND B.SERV_PROV_CODE = F.SERV_PROV_CODE AND F.GF_ITEM_STATUS_FLAG = 'INVOICED' INNER JOIN  dbo.F4INVOICE I ON I.INVOICE_NBR = X.INVOICE_NBR AND X.SERV_PROV_CODE = X.SERV_PROV_CODE WHERE B.SERV_PROV_CODE = 'WINSALEM'  AND I.INVOICE_DATE >= CONVERT(datetime,'$$fDate$$',101) AND I.INVOICE_DATE <= CONVERT(datetime,'$$tDate$$',101)";
     sql = sql.replace("$$fDate$$", fDate).replace("$$tDate$$", tDate);
 
     var array = new Array();
     try {
         var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
-        var ds = initialContext.lookup("java:/AA");
+        var ds = initialContext.lookup("java:/WINSALEM");
         var conn = ds.getConnection();        
         var sStmt = aa.db.prepareStatement(conn, sql);        
-        var sStmt = conn.prepareStatement(sql);
+        //var sStmt = conn.prepareStatement(sql);
         var rSet = sStmt.executeQuery();
        while (rSet.next()) {
             var obj = {};
@@ -93,7 +93,9 @@ function getRecords(fDate, tDate)
         return array;
 
     } catch (err) {
-        aa.print(err.message);
+        aa.env.setValue("returnCode", "-1"); // error
+        aa.env.setValue("returnValue", err.message + " on line " + err.lineNumber);
+        message += err.message + "\n";
     }    
     finally
     {   
