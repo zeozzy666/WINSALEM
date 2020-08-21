@@ -12,7 +12,8 @@ if (recordType)
 	//copy ASIT
 	copyASITables(capId, newCap);
 	//create follow up inspection
-	var newInspId = scheduleInspect(newCap, "Follow-Up Investigation", 14);
+	var newInspId = 0;
+	//newInspId = scheduleInspect(newCap, "Follow-Up Investigation", 14);
 	//Copy failed GSIs
 	copyFailedGuidesheetItems(capId, inspId, newCap, newInspId);
 	//Create GIS object
@@ -25,7 +26,11 @@ if (recordType)
 	var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
 	var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
 	if (accelaInspector)
+	{
 		assignCap(accelaInspector, newCap);
+		//assignInspection(parseInt(newInspId), accelaInspector)
+	}
+		
 	//Update workflow
 	if ("No Violation".equals(inspResult))
 		resultWorkflowTask("Initial Investigation", "No Violation", "Updated via IRSA", "");
