@@ -49,7 +49,7 @@ if (recordType)
 	//#region new record automations
 	if (matches(inspResult, "Minimum Housing - Unfit", "Minimum Housing - Minor", "Abandoned Structure", "Vacant Non-Residential"))
 	{
-		resultWorkflowTask("Research", "Complete", "Updated via IRSA", "", newCap);
+		resultWorkflowTask("Research", "Complete", "Updated via IRSA", "", null, newCap);
 		if ("Minimum Housing - Minor".equals(inspResult))
 		{
 			var minHousMinAssignTo = lookup("WINSALEM_SETTINGS", "MINIMUM_HOUSING_R_ASSIGN");
