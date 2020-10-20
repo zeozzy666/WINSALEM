@@ -39,6 +39,19 @@ if (recordType)
 	else
 		resultWorkflowTask("Initial Investigation", "In Violation", "Updated via IRSA", "");
 
+	//Close out AO if environmental
+	if (appMatch("Enforcement/Environmental/*/*", newCap) && !appMatch("Enforcement/Environmental/Vector/Rats", newCap))
+	{
+		resultWorkflowTask("Case", "Closed", "Updated via IRSA", "");
+		//Update case workflow if city owned
+		if ("City Owned".equals(AInfo["Owner or Tenant"]))
+		{
+			deactivateTask("Notification", null, newCap);
+			deactivateTask("Follow-Up Investigation", null, newCap);
+			activateTask("Abatement", null, newCap)
+		}
+	}		
+
 	//link as child to AO
 	var linkResult = aa.cap.createAppHierarchy(capId, newCap);
 	if (linkResult.getSuccess())
