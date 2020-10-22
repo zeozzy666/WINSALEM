@@ -14,6 +14,7 @@ if (recordType)
 	//create follow up inspection
 	var newInspId = 0;
 	//newInspId = scheduleInspect(newCap, "Follow-Up Investigation", 14);
+	createPendingInspFromReqd();
 	//Copy failed GSIs
 	copyFailedGuidesheetItems(capId, inspId, newCap, newInspId);
 	//Create GIS object
