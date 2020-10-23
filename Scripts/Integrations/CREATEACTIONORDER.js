@@ -64,12 +64,15 @@ try
           var unit = getGISInfoByObject("WINSALEM", "Address Points", "UNIT", gisAddressObject);
           var searchRefAddressModel = aa.proxyInvoker.newInstance("com.accela.aa.aamain.address.RefAddressModel").getOutput();
           searchRefAddressModel.setStreetName(stName);
-          searchRefAddressModel.setHouseNumberStart(Number(hsNum));
+          if (Number(hsNum))
+            searchRefAddressModel.setHouseNumberStart(Number(hsNum));
+          else
+            addMessage("Cannot set house number. Not a number: " + hsNum);
           searchRefAddressModel.setCity(city);
           searchRefAddressModel.setUnitStart(unit);
 
           //Look up the refAddressModel.
-          var searchResult = aa.address.getRefAddressByServiceProviderRefAddressModel(searchRefAddressModel).getOutput();
+          var searchResult = aa.address.getRefAddressByServiceProviderRefAddressModel(searchRefAddressModel).getOutput() || new Array();
           if (searchResult.length > 0)
           {
             var addressModel = fillAddressModel(searchResult[0]);
@@ -78,10 +81,22 @@ try
             addParcelFromRef(pracelNum);
             refreshParcelAndOwnerInfo(capId);
             //schedule initial investigation
-            scheduleInspection("Initial Investigation", 1);
+            var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
             //create GIS object
-            copyParcelGisObjects();             
-          }       
+            copyParcelGisObjects();          
+            //assign new cap
+            var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
+            var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
+            if (accelaInspector)
+            {
+            assignInspection(parseInt(newInspId), accelaInspector);
+            assignCap(accelaInspector);
+            }  
+          }
+          else
+          {
+            addMessage("Cannot find address: " + searchRefAddressModel.getFullAddress());
+          }
                     
         }
 
@@ -158,9 +173,17 @@ try
             addMessage("Problem when creating parcel for " + capId.getCustomID() + ": " + createPMResult.getErrorMessage());
         }
        //schedule initial investigation
-       scheduleInspection("Initial Investigation", 1);
+       var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
        //create GIS Object
-       copyParcelGisObjects();        
+       copyParcelGisObjects();
+        //assign new cap
+        var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
+        var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
+        if (accelaInspector)
+        {
+          assignInspection(parseInt(newInspId), accelaInspector);
+          assignCap(accelaInspector);
+        }  
        }
    }
 }
