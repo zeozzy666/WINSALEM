@@ -83,7 +83,9 @@ try
             //schedule initial investigation
             var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
             //create GIS object
-            copyParcelGisObjects();          
+            copyParcelGisObjects();
+            //update GIS info
+            updateGISCapInfo();     
             //assign new cap
             var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
             var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
@@ -176,6 +178,8 @@ try
        var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
        //create GIS Object
        copyParcelGisObjects();
+        //update GIS info
+        updateGISCapInfo();  
         //assign new cap
         var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
         var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
