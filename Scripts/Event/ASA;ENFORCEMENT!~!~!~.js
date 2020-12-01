@@ -16,5 +16,14 @@ else
 	}
 		
 }
+try{
+	if(!publicUser){
+		copyParcelGisObjects();
+	}
+} catch (err) {
+	logDebug("A JavaScript Error occurred: ASA:ENFORCEMENT/*/*/*: copyParcelGisObjects()" + err.message);
+	logDebug(err.stack);
+};
+
 //update GIS info
 updateGISCapInfo();
