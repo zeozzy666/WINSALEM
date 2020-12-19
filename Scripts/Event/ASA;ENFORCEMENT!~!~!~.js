@@ -16,7 +16,9 @@ else
 	}
 		
 }
-try{
+try {
+	//Is this why the GIS object does not get created from the mobile app?
+	//Check
 	if(!publicUser){
 		copyParcelGisObjects();
 	}
