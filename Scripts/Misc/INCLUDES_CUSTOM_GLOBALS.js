@@ -1,1 +1,1 @@
-showDebug = matches(currentUserID,"FISHAC");
+showDebug = matches(currentUserID, "FISHAC","FOUADI");
