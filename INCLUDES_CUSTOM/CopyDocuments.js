@@ -17,8 +17,6 @@ Parameters:
 	categories - optional. comma delimited list of categories to copy.
 =========================================== */
 
-copyDocuments(pFromCapId, pToCapId)
-
 function copyDocuments(pFromCapId, pToCapId) {
 
 	//Copies all attachments (documents) from pFromCapId to pToCapId

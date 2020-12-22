@@ -7,6 +7,7 @@ if (recordType)
 	copyAddresses(capId, newCap);
 	copyParcels(capId, newCap);
 	copyOwner(capId, newCap);
+	copyDocuments(capId, newCap)
 	//copy asi
 	copyMatchingCustomFields(capId, newCap);
 	//copy ASIT
