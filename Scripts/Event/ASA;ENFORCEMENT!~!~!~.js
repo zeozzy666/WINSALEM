@@ -17,15 +17,15 @@ else
 		
 }
 try {
-	//Is this why the GIS object does not get created from the mobile app?
-	//
+	logDebug("publicUser: " + publicUser)
 	if(!publicUser){
 		copyParcelGisObjects();
 	}
 } catch (err) {
 	logDebug("A JavaScript Error occurred: ASA:ENFORCEMENT/*/*/*: copyParcelGisObjects()" + err.message);
 	logDebug(err.stack);
+	aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", err.message + br + debug)
 };
-
+aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", err.message + br + debug)
 //update GIS info
 updateGISCapInfo();
