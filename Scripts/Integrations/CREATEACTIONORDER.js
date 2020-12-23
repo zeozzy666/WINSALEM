@@ -164,6 +164,7 @@ try {
                     addMessage("Problem when creating parcel for " + capId.getCustomID() + ": " + createPMResult.getErrorMessage());
             }
             //schedule initial investigation
+            //var newInspId = scheduleInspect(capId, "Initial Investigation", 1, null, requestType);
             var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
             //create GIS Object
             copyParcelGisObjects();
