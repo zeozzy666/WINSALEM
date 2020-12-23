@@ -44,7 +44,8 @@ if (recordType)
 	//Close out AO if environmental
 	if (appMatch("Enforcement/Environmental/*/*", newCap) && !appMatch("Enforcement/Environmental/Vector/Rats", newCap))
 	{
-		resultWorkflowTask("Case", "Closed", "Updated via IRSA", "");
+
+		//resultWorkflowTask("Case", "Closed", "Updated via IRSA", "");
 		//Update case workflow if city owned
 		if ("City Owned".equals(AInfo["Owner or Tenant"]))
 		{
