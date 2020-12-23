@@ -9,6 +9,7 @@ else
 	//assign new cap
 	var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
 	var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
+	logDebug("accelaInspector: " + accelaInspector)
 	if (accelaInspector)
 	{
 		assignInspection(parseInt(newInspId), accelaInspector);
@@ -24,8 +25,8 @@ try {
 } catch (err) {
 	logDebug("A JavaScript Error occurred: ASA:ENFORCEMENT/*/*/*: copyParcelGisObjects()" + err.message);
 	logDebug(err.stack);
-	aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", err.message + br + debug)
+	aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Error Messages", err.message + br + debug)
 };
-aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", err.message + br + debug)
+aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages",debug)
 //update GIS info
 updateGISCapInfo();
