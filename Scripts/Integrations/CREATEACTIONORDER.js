@@ -16,6 +16,8 @@ try {
 catch (e1) {
     addMessage("problem loading environment " + e1.message);
 }
+
+var debugMessage = "Messages:" + br;
 try {
     var source = aa.env.getValue("Source");
     var location = aa.env.getValue("Location");
@@ -34,7 +36,7 @@ try {
         //create action order
         capId = createCap(actionOrderType, "");
         addMessage("Created Action order " + capId.getCustomID());
-
+        debugMessage =+ "addressID: " + addressID + br;
         //update custom info
         editAppSpecific("Request Type", requestType);
         isBlank(source) ? editAppSpecific("Source of Complaint", "Unkown") : editAppSpecific("Source of Complaint", source);
@@ -49,6 +51,7 @@ try {
             var gisAddressObject = aa.gis.getGISObjectDetails("WINSALEM", "Address Points", addressID).getOutput();
             if (gisAddressObject.GISObjects.length == 0) {
                 addMessage("Could not find addressID: " + addressID);
+                debugMessage = + "Could not find addressID: " + addressID + br;
             }
             else {
                 var stName = getGISInfoByObject("WINSALEM", "Address Points", "STNAME", gisAddressObject);
@@ -71,9 +74,11 @@ try {
                     createCapAddress(capId, addressModel);
                     var pracelNum = getGISInfoByObject("WINSALEM", "Parcels", "PIN", gisAddressObject);
                     addParcelFromRef(pracelNum);
+                    debugMessage = + "Schedule inspection: " + br;
                     refreshParcelAndOwnerInfo(capId);
                     //schedule initial investigation
-                    var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
+                    //var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
+                    var newInspId = scheduleInspect(capId, "Initial Investigation", 1, null, requestType);
                     //create GIS object
                     copyParcelGisObjects();
                     //update GIS info
@@ -81,7 +86,9 @@ try {
                     //assign new cap
                     var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
                     var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
+
                     if (accelaInspector) {
+                        debugMessage = + "accelaInspector: " + accelaInspector + br;
                         assignInspection(parseInt(newInspId), accelaInspector);
                         assignCap(accelaInspector);
                     }
@@ -94,6 +101,7 @@ try {
 
         }
         else {
+            debugMessage = + "creating new address: " + br;
             var newAddressModel = aa.proxyInvoker.newInstance("com.accela.aa.aamain.address.AddressModel").getOutput();
             newAddressModel.setCapID(capId);
             newAddressModel.setServiceProviderCode(aa.getServiceProviderCode());
@@ -161,6 +169,7 @@ try {
                 else
                     addMessage("Problem when creating parcel for " + capId.getCustomID() + ": " + createPMResult.getErrorMessage());
             }
+            debugMessage = + "Schedule inspection while creating new address: " + br;
             //schedule initial investigation
             var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
             //create GIS Object
@@ -170,6 +179,7 @@ try {
             //assign new cap
             var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
             var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
+            debugMessage = + "accelaInspector while creating new address: " + accelaInspector + br;
             if (accelaInspector) {
                 assignInspection(parseInt(newInspId), accelaInspector);
                 assignCap(accelaInspector);
@@ -181,12 +191,14 @@ catch (err) {
     aa.env.setValue("returnCode", "-1"); // error
     aa.env.setValue("returnValue", err.message + " on line " + err.lineNumber);
     addMessage(err.message);
+    aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", err.message + br + debugMessage)
 }
 finally {
     result.messages = messages;
     //printJSON(result);
     aa.env.setValue("returnCode", "1");
     aa.env.setValue("result", result);
+    aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", debugMessage)
 }
 function printJSON(object) {
     for (var key in object) {
