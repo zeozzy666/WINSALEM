@@ -73,8 +73,7 @@ try {
                     addParcelFromRef(pracelNum);
                     refreshParcelAndOwnerInfo(capId);
                     //schedule initial investigation
-                    //var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
-                    var newInspId = scheduleInspect(capId, "Initial Investigation", 1, null, requestType);
+                    var newInspId = scheduleInspect(capId, "Initial Investigation", 1);
                     //create GIS object
                     copyParcelGisObjects();
                     //update GIS info
