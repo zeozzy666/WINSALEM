@@ -4,16 +4,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Reflection;
 using PDFHandling.Models;
 using PDFHandling.Utilities;
 using System.IO;
+using log4net;
 
 namespace PDFHandling.Controllers
 {
     public class PDFRetrieveController : ApiController
     {
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public List<String> GetTrackingIDs(String fileName)
         {
+            log.Debug("In Controller gettting list of tracking numbers");
             Utilites.SetLicenseExample();
             Utilites.getUSPSDocument(fileName);
             List<String> returnList = Utilites.ProcessDocument(fileName);
@@ -23,6 +27,7 @@ namespace PDFHandling.Controllers
 
         public byte[] GetConfirmationDocument(String fileName, String trackingID)
         {
+            log.Debug("In Controller gettting document");
             Utilites.SetLicenseExample();
             //Utilites.getUSPSDocument(fileName);
             return Utilites.SplitPages(fileName, trackingID);

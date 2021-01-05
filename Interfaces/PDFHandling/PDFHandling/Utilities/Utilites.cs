@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Text;
+using System.Reflection;
 using Aspose.Pdf;
 using Aspose.Pdf.Text;
 using Aspose.Pdf.Devices;
@@ -11,15 +12,18 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using PDFHandling.Models;
 using System.Net;
+using log4net;
 
 namespace PDFHandling.Utilities
 {
     public class Utilites
     {
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static String getUSPSDocument(String fileName)
         {
             using (var httpClient = new HttpClient())
             {
+                log.Debug("Getting Document from USPS");
                 String listURL = "https://pdx.usps.com/api/extracts?fullList=true&filename=" + fileName;
                 // String listURL = "https://pdx.usps.com/api/extracts?fullList=true&filename=toc113020.pdf"; 
                 //String url = "https://pdx.usps.com/api/extracts?fullList=true&fileType=BPOD";
