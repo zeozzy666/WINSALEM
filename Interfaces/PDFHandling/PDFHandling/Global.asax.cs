@@ -13,6 +13,8 @@ namespace PDFHandling
     {
         protected void Application_Start()
         {
+            // Code that runs on application startup
+            log4net.Config.XmlConfigurator.Configure();
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

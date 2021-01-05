@@ -22,7 +22,8 @@ namespace PDFHandling.Controllers
             Utilites.getUSPSDocument(fileName);
             List<String> returnList = Utilites.ProcessDocument(fileName);
             return returnList;
-            //http://192.168.1.69/api/PDFRetrieve/GetTrackingIDs/toc113020.pdf
+            //http://192.168.1.69/api/PDFRetrieve/GetTrackingIDs/toc113020.pdf/1
+            //https://de-winston-salem.azurewebsites.net/
         }
 
         public byte[] GetConfirmationDocument(String fileName, String trackingID)
