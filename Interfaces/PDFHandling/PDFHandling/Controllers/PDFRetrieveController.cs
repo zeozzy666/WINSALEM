@@ -29,7 +29,16 @@ namespace PDFHandling.Controllers
         public byte[] GetConfirmationDocument(String fileName, String trackingID)
         {
             log.Debug("In Controller gettting document");
-            Utilites.SetLicenseExample();
+            try
+            {
+                Utilites.SetLicenseExample();
+            }
+            catch (Exception ex)
+            {
+                log.Debug("Getting license threw an error:" + ex.Message);
+                return null;
+            }
+            
             //Utilites.getUSPSDocument(fileName);
             return Utilites.SplitPages(fileName, trackingID);
             //pod1130200001.pdf/9171999991703877016760
