@@ -169,19 +169,27 @@ namespace PDFHandling.Utilities
             }
             catch (Exception ex)
             {
-                log.Debug("Application threw an error:" + ex.Message);
+                log.Debug("Application threw an error getting document:" + ex.Message);
             }
-            using (FileStream SourceStream = File.Open(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
-            //using (FileStream SourceStream = File.Open("C:/Temp" + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
+            try
             {
-                //SourceStream.Seek(0, SeekOrigin.End);
-                //await SourceStream.WriteAsync(result, 0, result.Length);
-                using (var memoryStream = new MemoryStream())
+                using (FileStream SourceStream = File.Open(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
+                //using (FileStream SourceStream = File.Open("C:/Temp" + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
                 {
-                    SourceStream.CopyTo(memoryStream);
-                    return memoryStream.ToArray();
-                }
+                    //SourceStream.Seek(0, SeekOrigin.End);
+                    //await SourceStream.WriteAsync(result, 0, result.Length);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        SourceStream.CopyTo(memoryStream);
+                        return memoryStream.ToArray();
+                    }
 
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Debug("Application threw an error returning document:" + ex.Message);
+                return null;
             }
 
 
