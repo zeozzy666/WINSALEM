@@ -116,7 +116,8 @@ namespace PDFHandling.Utilities
         {
             String trackimgIDToSearch = trackingID.Substring(2);
             trackimgIDToSearch = trackimgIDToSearch.Substring(0, 4) + " " + trackimgIDToSearch.Substring(4, 4) + " " + trackimgIDToSearch.Substring(8, 4) + " " + trackimgIDToSearch.Substring(12, 4) + " " + trackimgIDToSearch.Substring(16, 4);
-           
+
+            log.Debug("Gettting document from file system");
             // Open document
             //Document pdfDocument = new Document("C:/Temp" + "/" + fileName, "PH6M8K");
             Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + fileName, "PH6M8K");
