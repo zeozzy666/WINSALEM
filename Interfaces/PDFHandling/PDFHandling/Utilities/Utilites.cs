@@ -118,51 +118,58 @@ namespace PDFHandling.Utilities
             trackimgIDToSearch = trackimgIDToSearch.Substring(0, 4) + " " + trackimgIDToSearch.Substring(4, 4) + " " + trackimgIDToSearch.Substring(8, 4) + " " + trackimgIDToSearch.Substring(12, 4) + " " + trackimgIDToSearch.Substring(16, 4);
 
             log.Debug("Gettting document from file system");
-            // Open document
-            //Document pdfDocument = new Document("C:/Temp" + "/" + fileName, "PH6M8K");
-            Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + fileName, "PH6M8K");
-
-            int pageCount = 1;
-
-            // Loop through all the pages
-            foreach (Page pdfPage in pdfDocument.Pages)
+            try
             {
-                //if (pageCount == 2)
-                //{
-                //    break;
-                //}
-                String extractedText = "";
-                using (MemoryStream textStream = new MemoryStream())
+                // Open document
+                //Document pdfDocument = new Document("C:/Temp" + "/" + fileName, "PH6M8K");
+                Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + fileName, "PH6M8K");
+
+                int pageCount = 1;
+
+                // Loop through all the pages
+                foreach (Page pdfPage in pdfDocument.Pages)
                 {
-                    // Create text device
-                    TextDevice textDevice = new TextDevice();
+                    //if (pageCount == 2)
+                    //{
+                    //    break;
+                    //}
+                    String extractedText = "";
+                    using (MemoryStream textStream = new MemoryStream())
+                    {
+                        // Create text device
+                        TextDevice textDevice = new TextDevice();
 
-                    // Set different options
-                    TextExtractionOptions options = new
-                    TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Raw);
-                    textDevice.ExtractionOptions = options;
+                        // Set different options
+                        TextExtractionOptions options = new
+                        TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Raw);
+                        textDevice.ExtractionOptions = options;
 
-                    // Convert the page and save text to the stream
-                    textDevice.Process(pdfPage, textStream);
+                        // Convert the page and save text to the stream
+                        textDevice.Process(pdfPage, textStream);
 
-                    // Close memory streamPH
-                    textStream.Close();
+                        // Close memory streamPH
+                        textStream.Close();
 
-                    // Get text from memory stream
-                    extractedText = Encoding.Unicode.GetString(textStream.ToArray());
-                    //extractedText.Contains("")
+                        // Get text from memory stream
+                        extractedText = Encoding.Unicode.GetString(textStream.ToArray());
+                        //extractedText.Contains("")
+                    }
+                    if (extractedText.Contains(trackimgIDToSearch))
+                    {
+                        Document newDocument = new Document();
+                        newDocument.Pages.Add(pdfPage);
+                        //newDocument.Save("C:/Temp" + "/" + trackimgIDToSearch + ".pdf");
+                        newDocument.Save(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf");
+                        //"C:/Temp" + "/" + 
+                        break;
+                    }
+
+                    pageCount++;
                 }
-                if (extractedText.Contains(trackimgIDToSearch))
-                {
-                    Document newDocument = new Document();
-                    newDocument.Pages.Add(pdfPage);
-                    //newDocument.Save("C:/Temp" + "/" + trackimgIDToSearch + ".pdf");
-                    newDocument.Save(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf");
-                    //"C:/Temp" + "/" + 
-                    break;
-                }
-
-                pageCount++;
+            }
+            catch (Exception ex)
+            {
+                log.Debug("Application threw an error:" + ex.Message);
             }
             using (FileStream SourceStream = File.Open(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
             //using (FileStream SourceStream = File.Open("C:/Temp" + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
