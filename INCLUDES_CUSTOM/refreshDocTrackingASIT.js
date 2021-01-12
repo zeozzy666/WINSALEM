@@ -51,7 +51,22 @@ function refreshDocTrackingASIT()
 				var toState = getNode(xml, "DestinationState");
 				var toZip = getNode(xml, "DestinationZip");
 				var address = toCity + ", " + toState + ", " + toZip;
-
+				/**** Added 12/16/2020 by MW */
+				var detailArray = aa.util.getValueFromXML("TrackDetail", xml).split("</TrackDetail><TrackDetail>")
+				var stringHistory = "<html><body><h3 style='color:blue';>Status History</h3>";
+				for (z in detailArray) {
+					aa.print(getNode(detailArray[z], "Event"))
+					var detailDate = getNode(detailArray[z], "EventDate");
+					var detailTime = getNode(detailArray[z], "EventTime");
+					var detailEvent = getNode(detailArray[z], "Event");
+					var detailCity = getNode(detailArray[z], "EventCity");
+					var detailStatusCategory = getNode(detailArray[z], "EventStatusCategory");
+					stringHistory += "<p style='font-size:160%;color:blue;'>" + "Date: " + detailDate + "<br>" + "Time: " + detailTime + "<br>" + "Event: " + detailEvent + "<br>" + "City: " + detailCity + "<br>" + "Status Category: " + detailStatusCategory + "</p>"
+				}
+				stringHistory += "</body></html>"
+				//aa.print(stringHistory)
+				USPSTable[x]["Status History"] = stringHistory;
+				/**** Added 12/16/2020 by MW */
 				USPSTable[x]["Status"] = status;
 				USPSTable[x]["Status Date"] = statusDate;
 				USPSTable[x]["Status Time"] = statusTime;
