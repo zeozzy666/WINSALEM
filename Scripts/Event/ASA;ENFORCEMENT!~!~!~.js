@@ -8,7 +8,7 @@ if (!matches(appTypeArray[1], "Action Order")) {
 }
 else {
     var newInspId = 0;
-    newInspId = scheduleInspect(capId, "Initial Investigation", 1, null, AInfo["Request Type"]);
+    newInspId = scheduleInspect(capId, "Initial Investigation", 1, null, getAppSpecific("Request Type"));
     //assign new cap
     var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
     var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
