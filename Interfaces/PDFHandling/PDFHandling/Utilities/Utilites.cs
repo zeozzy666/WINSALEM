@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Text;
 using System.Reflection;
+using System.Configuration;
 using Aspose.Pdf;
 using Aspose.Pdf.Text;
 using Aspose.Pdf.Devices;
@@ -19,96 +20,76 @@ namespace PDFHandling.Utilities
     public class Utilites
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        //Saves retrieved documents to disc in Documents folder
         public static String getUSPSDocument(String fileName)
         {
-            using (var httpClient = new HttpClient())
+            try
             {
-                log.Debug("Getting Document from USPS");
-                String listURL = "https://pdx.usps.com/api/extracts?fullList=true&filename=" + fileName;
-                // String listURL = "https://pdx.usps.com/api/extracts?fullList=true&filename=toc113020.pdf"; 
-                //String url = "https://pdx.usps.com/api/extracts?fullList=true&fileType=BPOD";
-
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic Y293c2NiZDpDaXR5b2ZXaW5zdG9uIzE =");
-                string responseList = httpClient.GetStringAsync(new Uri(listURL)).Result;
-                USPSFileList objUSPSFileList = JsonConvert.DeserializeObject<USPSFileList>(responseList);
-
-                String fileURL = "https://pdx.usps.com/api/outbound-files/" + objUSPSFileList.outboundFiles[0].id;
-                Stream responseStream = httpClient.GetStreamAsync(new Uri(fileURL)).Result;
-                using (FileStream output = File.OpenWrite(HttpContext.Current.Server.MapPath("/Documents") + "/" + objUSPSFileList.outboundFiles[0].filename))
-                //using (FileStream output = File.OpenWrite("C:/Temp" + "/" + objUSPSFileList.outboundFiles[0].filename))
+                String baseURL = ConfigurationManager.AppSettings["USPSBaseURL"];
+                using (var httpClient = new HttpClient())
                 {
-                    responseStream.CopyTo(output);
+                    log.Debug("Getting Document from USPS");
+                    String listURL = baseURL + "extracts?fullList=true&filename=" + fileName;
+                    // String listURL = "https://pdx.usps.com/api/extracts?fullList=true&filename=toc113020.pdf"; 
+
+                    httpClient.DefaultRequestHeaders.Add("Authorization", ConfigurationManager.AppSettings["USPSBasicAuth"]);
+                    string responseList = httpClient.GetStringAsync(new Uri(listURL)).Result;
+                    USPSFileList objUSPSFileList = JsonConvert.DeserializeObject<USPSFileList>(responseList);
+
+                    String fileURL = baseURL + "outbound-files/" + objUSPSFileList.outboundFiles[0].id;
+                    Stream responseStream = httpClient.GetStreamAsync(new Uri(fileURL)).Result;
+                    using (FileStream output = File.OpenWrite(HttpContext.Current.Server.MapPath("/Documents") + "/" + objUSPSFileList.outboundFiles[0].filename))
+
+                    {
+                        responseStream.CopyTo(output);
+
+                    }
 
                 }
-
-
-                //USPSFileList objUSPSFileList = JsonConvert.DeserializeObject<USPSFileList>(response);
+            }
+            catch (Exception ex)
+            {
+                log.Debug("Application threw an error getting document from USPS:" + ex.Message);
+                return null;
             }
             return "";
         }
         public static List<String> ProcessDocument(String fileName)
         {
-            //getUSPSDocument(fileName);
-            // Open document
-            //HttpContext.Current.Server.MapPath("/Utilities") +
-            Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + fileName, "PH6M8K");
-            //Document pdfDocument = new Document("C:/Temp" + "/" + fileName, "PH6M8K");
-
-            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("7199.*?pod1130");
-            TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber(regex); //
-            // Accept the absorber for all the pages
-            pdfDocument.Pages.Accept(textFragmentAbsorber);
-            // Get the extracted text fragments
-            List<String> trackingNumbers = new List<string>();
-
-            TextFragmentCollection textFragmentCollection = textFragmentAbsorber.TextFragments;
-            foreach (TextFragment text in textFragmentCollection)
+            try
             {
-                Console.Write(text.Text + " ");
-                String trackingID = "91" + text.Text.Substring(0, 24).Replace(" ", "");
-                trackingNumbers.Add(trackingID);
-                //7199 9991 7038 7701 6760 11/23/2020 at 08:03 am pod1130
-                //9171999991703877016760
-                //7199 9991 7039 3496 8445
-                //9171999991703934968445
+                // Open document
+                Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + fileName, ConfigurationManager.AppSettings["USPSFilePassword"]);
+
+                //System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("7199.*?pod1130");
+                String fileNameForRegex = fileName.Split('.')[0].Replace("toc", "pod");
+                System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("7199.*?" + fileNameForRegex);
+                TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber(regex); //
+                                                                                             // Accept the absorber for all the pages
+                pdfDocument.Pages.Accept(textFragmentAbsorber);
+                // Get the extracted text fragments
+                List<String> trackingNumbers = new List<string>();
+
+                TextFragmentCollection textFragmentCollection = textFragmentAbsorber.TextFragments;
+                foreach (TextFragment text in textFragmentCollection)
+                {
+                    Console.Write(text.Text + " ");
+                    String trackingID = "91" + text.Text.Substring(0, 24).Replace(" ", "");
+                    trackingNumbers.Add(trackingID);
+                    //7199 9991 7038 7701 6760 11/23/2020 at 08:03 am pod1130
+                    //9171999991703877016760
+                    //7199 9991 7039 3496 8445
+                    //9171999991703934968445
+                }
+
+                return trackingNumbers;
             }
-
-            return trackingNumbers;
-            //StringBuilder builder = new StringBuilder();
-            //// String to hold extracted text
-            //string extractedText = "";
-
-            //foreach (Page pdfPage in pdfDocument.Pages)
-            //{
-            //    using (MemoryStream textStream = new MemoryStream())
-            //    {
-            //        // Create text device
-            //        TextDevice textDevice = new TextDevice();
-
-            //        // Set different options
-            //        TextExtractionOptions options = new
-            //        TextExtractionOptions(TextExtractionOptions.TextFormattingMode.Raw);
-            //        textDevice.ExtractionOptions = options;
-
-            //        // Convert the page and save text to the stream
-            //        textDevice.Process(pdfPage, textStream);
-
-            //        // Close memory stream
-            //        textStream.Close();
-
-            //        // Get text from memory stream
-            //        extractedText = Encoding.Unicode.GetString(textStream.ToArray());
-            //        //extractedText.Contains("")
-            //    }
-            //    builder.Append(extractedText);
-            //}
-
-            ////dataDir = dataDir + "PDF_to_TXT_Raw.txt";
-            //// Save the text file
-            ////File.WriteAllText(dataDir, builder.ToString());
-            //String g = builder.ToString();
-            //Array arr = g.ToArray();
-            //return builder.ToString();
+            catch (Exception ex)
+            {
+                log.Debug("Application threw an error processing document:" + ex.Message);
+                return null;
+            }
         }
 
      
@@ -122,17 +103,11 @@ namespace PDFHandling.Utilities
             {
                 // Open document
                 //Document pdfDocument = new Document("C:/Temp" + "/" + fileName, "PH6M8K");
-                Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + fileName, "PH6M8K");
-
-                int pageCount = 1;
+                Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + fileName, ConfigurationManager.AppSettings["USPSFilePassword"]);
 
                 // Loop through all the pages
                 foreach (Page pdfPage in pdfDocument.Pages)
                 {
-                    //if (pageCount == 2)
-                    //{
-                    //    break;
-                    //}
                     String extractedText = "";
                     using (MemoryStream textStream = new MemoryStream())
                     {
@@ -163,8 +138,6 @@ namespace PDFHandling.Utilities
                         //"C:/Temp" + "/" + 
                         break;
                     }
-
-                    pageCount++;
                 }
             }
             catch (Exception ex)
@@ -174,10 +147,8 @@ namespace PDFHandling.Utilities
             try
             {
                 using (FileStream SourceStream = File.Open(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
-                //using (FileStream SourceStream = File.Open("C:/Temp" + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
                 {
-                    //SourceStream.Seek(0, SeekOrigin.End);
-                    //await SourceStream.WriteAsync(result, 0, result.Length);
+                    
                     using (var memoryStream = new MemoryStream())
                     {
                         SourceStream.CopyTo(memoryStream);
@@ -196,7 +167,32 @@ namespace PDFHandling.Utilities
            // return "done";
         }
 
-       
+        public static void DeleteFiles(String fileName)
+        {
+            try
+            {
+                if (fileName == "null")
+                {
+                    string[] filePaths = Directory.GetFiles(HttpContext.Current.Server.MapPath("/Documents"));
+                    foreach (string filePath in filePaths)
+                    {
+                        if (filePath.Contains("folder.js"))
+                        {
+                            continue;
+                        }
+                        File.Delete(filePath);
+                    }
+                }
+                else
+                {
+                    File.Delete(HttpContext.Current.Server.MapPath("/Documents/") + fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Debug("Error deleting file:" + ex.Message);
+            }
+        }
         public static void SetLicenseExample()
         {
             // Initialize license object
@@ -214,6 +210,7 @@ namespace PDFHandling.Utilities
             Console.WriteLine("License set successfully.");
         }
 
+        //Function not used. Saved as future reference
         public static String GetTable()
         {
             Document pdfDocument = new Document("C:/Users/mwells/source/repos/PDFHandling/PDFHandling/Utilities/toc122120 (1).pdf", "PH6M8K");

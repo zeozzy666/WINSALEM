@@ -1,0 +1,17 @@
+08:20:49,525 [11] [PDFHandling.Controllers.PDFRetrieveController] [GetTrackingIDs] DEBUG - In Controller gettting list of tracking numbers
+08:20:50,014 [11] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:23:06,088 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetTrackingIDs] DEBUG - In Controller gettting list of tracking numbers
+08:23:12,136 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:25:54,143 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetTrackingIDs] DEBUG - In Controller gettting list of tracking numbers
+08:25:58,231 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:29:29,521 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetTrackingIDs] DEBUG - In Controller gettting list of tracking numbers
+08:29:41,197 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:39:34,306 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetTrackingIDs] DEBUG - In Controller gettting list of tracking numbers
+08:39:40,426 [7] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:43:38,978 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:43:52,123 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:45:40,442 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:45:40,964 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:45:59,815 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+09:14:11,432 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetTrackingIDs] DEBUG - In Controller gettting list of tracking numbers
+09:14:12,552 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS

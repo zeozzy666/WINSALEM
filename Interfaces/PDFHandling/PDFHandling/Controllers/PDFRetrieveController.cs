@@ -18,12 +18,22 @@ namespace PDFHandling.Controllers
         public List<String> GetTrackingIDs(String fileName)
         {
             log.Debug("In Controller gettting list of tracking numbers");
-            Utilites.SetLicenseExample();
+            try
+            {
+                Utilites.SetLicenseExample();
+            }
+            catch (Exception ex)
+            {
+                log.Debug("Getting license threw an error:" + ex.Message);
+                return null;
+            }
             Utilites.getUSPSDocument(fileName);
             List<String> returnList = Utilites.ProcessDocument(fileName);
             return returnList;
-            //http://192.168.1.69/api/PDFRetrieve/GetTrackingIDs/toc113020.pdf/1
-            //https://de-winston-salem.azurewebsites.net/
+
+        //http://192.168.1.69/api/PDFRetrieve/GetTrackingIDs/toc113020.pdf/1
+        //https://de-winston-salem.azurewebsites.net/
+       // https://localhost:44359/api/PDFRetrieve/GetTrackingIDs/toc011121.pdf/1
         }
 
         public byte[] GetConfirmationDocument(String fileName, String trackingID)
@@ -39,14 +49,24 @@ namespace PDFHandling.Controllers
                 return null;
             }
             
-            //Utilites.getUSPSDocument(fileName);
+            Utilites.getUSPSDocument(fileName);
             return Utilites.SplitPages(fileName, trackingID);
+
             //pod1130200001.pdf/9171999991703877016760
             //https://192.168.1.75/PDFService/api/PDFRetrieve/GetConfirmationDocument/pod1130200001.pdf/9171999991703877016760
             //http://192.168.1.75/PDFService/api/PDFRetrieve/GetConfirmationDocument/pod1130200001.pdf/9171999991703877016760
-            //http://localhost:44359/api/PDFRetrieve/GetConfirmationDocument/pod1130200001.pdf/9171999991703877016760
+            //http://localhost:44359/api/PDFRetrieve/GetConfirmationDocument/pod0111210001.pdf/9171999991703876895663
             //http://localhost/PDFHandling/api/PDFRetrieve/GetConfirmationDocument/pod1130200001.pdf/9171999991703877016760
             //https://winsalem-supp-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24744178&fileKey=A01000000283191E5C3H4W0YE2WE62&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003LT&altID=DEM-20-00004&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7701+6760.pdf
+        }
+        [System.Web.Http.AcceptVerbs("GET", "POST")]
+        public IHttpActionResult DeleteFile(String fileName)
+        {
+            Utilites.DeleteFiles(fileName);
+            return Ok();
+
+            //http://localhost:44359/api/PDFRetrieve/DeleteFile/DETEXTRO.RPT.0102061626/1
+            //http://localhost:44359/api/PDFRetrieve/DeleteFile/null/1
         }
     }
 }
