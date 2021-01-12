@@ -1,4 +1,4 @@
-
+logDebug("publicUser " + publicUser)
 if (!publicUser) {
     copyParcelGisObjects();
 }
@@ -8,6 +8,7 @@ if (!matches(appTypeArray[1], "Action Order")) {
 }
 else {
     var newInspId = 0;
+    logDebug("getAppSpecific(Request Type): " + getAppSpecific("Request Type"))
     newInspId = scheduleInspect(capId, "Initial Investigation", 1, null, getAppSpecific("Request Type"));
     //assign new cap
     var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
@@ -19,5 +20,6 @@ else {
     }
 
 }
+aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", debug)
 //update GIS info
 updateGISCapInfo();
