@@ -1,32 +1,23 @@
-if (!matches(appTypeArray[1], "Action Order"))
-{
-	scheduleInspection("Initial Inspection", 14, currentUserID);
+
+if (!publicUser) {
+    copyParcelGisObjects();
 }
-else
-{
-	var newInspId = 0;
-	newInspId = scheduleInspect(capId, "Initial Investigation", 1, null, AInfo["Request Type"]);
-	//assign new cap
-	var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
-	var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
-	logDebug("accelaInspector: " + accelaInspector)
-	if (accelaInspector)
-	{
-		assignInspection(parseInt(newInspId), accelaInspector);
-		assignCap(accelaInspector);
-	}
-		
+
+if (!matches(appTypeArray[1], "Action Order")) {
+    scheduleInspection("Initial Inspection", 14, currentUserID);
 }
-try {
-	logDebug("publicUser: " + publicUser)
-	if(!publicUser){
-		copyParcelGisObjects();
-	}
-} catch (err) {
-	logDebug("A JavaScript Error occurred: ASA:ENFORCEMENT/*/*/*: copyParcelGisObjects()" + err.message);
-	logDebug(err.stack);
-	aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Error Messages", err.message + br + debug)
-};
-aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages",debug)
+else {
+    var newInspId = 0;
+    newInspId = scheduleInspect(capId, "Initial Investigation", 1, null, AInfo["Request Type"]);
+    //assign new cap
+    var gisInspector = getGISInfo("WINSALEM", "GISADMIN.Code_Enforcement_Territories", "NCO");
+    var accelaInspector = lookup("WINSALEM_SETTINGS_GIS_INSPECTORS", gisInspector);
+    logDebug("accelaInspector: " + accelaInspector)
+    if (accelaInspector) {
+        assignInspection(parseInt(newInspId), accelaInspector);
+        assignCap(accelaInspector);
+    }
+
+}
 //update GIS info
 updateGISCapInfo();
