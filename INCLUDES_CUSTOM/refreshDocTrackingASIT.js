@@ -26,6 +26,7 @@ function refreshDocTrackingASIT()
 		var trackId = USPSTable[x]["Tracking Number"] + "";
 		if (trackId && trackId.length > 0)
 		{
+			trackId = trackId.trim();
 			var thisUri = uri;
 			thisUri = thisUri.replace("$$TRACKID$$", trackId);
 			thisUri = thisUri.replace("$$USERID$$", userId);

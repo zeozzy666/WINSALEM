@@ -23,83 +23,122 @@ function logDebug(z) {
     aa.print(z)
 }
 
-var trackingNumber = "(9171999991703877016760,9171999991703877306533)"
-var trackingFromService = '<ArrayOfstring xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">\
-    <string>9171999991703877016760</string>\
-<string>9171999991703877306076</string>\
-<string>9171999991703877306533</string>\
-<string>9171999991703877306700</string>\
-<string>9171999991703877308841</string>\
-<string>9171999991703877309015</string>\
-<string>9171999991703877309022</string>\
-<string>9171999991703877309039</string>\
-<string>9171999991703877309046</string>\
-<string>9171999991703877309190</string>\
-<string>9171999991703934965260</string>\
-<string>9171999991703934986531</string>\
-<string>9171999991703934986562</string>\
-<string>9171999991703934986579</string>\
-<string>9171999991703934986593</string>\
-<string>9171999991703934986609</string>\
-</ArrayOfstring >'
-//aa.print(trackingFromService.toString())
+//var trackingNumber = "(9171999991703877016760,9171999991703877306533)"
+//var trackingFromService = '<ArrayOfstring xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">\
+//    <string>9171999991703877016760</string>\
+//<string>9171999991703877306076</string>\
+//<string>9171999991703877306533</string>\
+//<string>9171999991703877306700</string>\
+//<string>9171999991703877308841</string>\
+//<string>9171999991703877309015</string>\
+//<string>9171999991703877309022</string>\
+//<string>9171999991703877309039</string>\
+//<string>9171999991703877309046</string>\
+//<string>9171999991703877309190</string>\
+//<string>9171999991703934965260</string>\
+//<string>9171999991703934986531</string>\
+//<string>9171999991703934986562</string>\
+//<string>9171999991703934986579</string>\
+//<string>9171999991703934986593</string>\
+//<string>9171999991703934986609</string>\
+//</ArrayOfstring >'
+////aa.print(trackingFromService.toString())
 var currentUserID = "ADMIN"
-var capArray = new Array();
+//var capArray = new Array();
 
-var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
-var ds = initialContext.lookup("java:/WINSALEM");
-var conn = ds.getConnection();
-//Unable to get managed connection for java:/AA
-//conn.close()
-var servProvCode = aa.getServiceProviderCode();
-try {
-    var SQL = "Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE In " + trackingNumber + " And SERV_PROV_CODE = 'WINSALEM'"
-    var dbStmt = conn.prepareStatement(SQL);
+//var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
+//var ds = initialContext.lookup("java:/WINSALEM");
+//var conn = ds.getConnection();
+////Unable to get managed connection for java:/AA
+////conn.close()
+//var servProvCode = aa.getServiceProviderCode();
+//try {
+//    var SQL = "Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE In " + trackingNumber + " And SERV_PROV_CODE = 'WINSALEM'"
+//    var dbStmt = conn.prepareStatement(SQL);
     
-    dbStmt.executeQuery();
-    results = dbStmt.getResultSet()
-    while (results.next()) {
-        var thisCap = new capsAndTracking();
-        aa.print(results.getString("ATTRIBUTE_VALUE"))
-        aa.print(results.getString("COLUMN_NAME"))
-        aa.print(results.getString("B1_PER_ID1"))
-        aa.print(results.getString("B1_PER_ID2"))
-        aa.print(results.getString("B1_PER_ID3"))
-        thisCap.B1_PER_ID1 = results.getString("B1_PER_ID1");
-        thisCap.B1_PER_ID2 = results.getString("B1_PER_ID2");
-        thisCap.B1_PER_ID3 = results.getString("B1_PER_ID3");
-        thisCap.TrackingID = results.getString("ATTRIBUTE_VALUE");
-        capArray.push(thisCap)
-    }
-    dbStmt.close();
+//    dbStmt.executeQuery();
+//    results = dbStmt.getResultSet()
+//    while (results.next()) {
+//        var thisCap = new capsAndTracking();
+//        aa.print(results.getString("ATTRIBUTE_VALUE"))
+//        aa.print(results.getString("COLUMN_NAME"))
+//        aa.print(results.getString("B1_PER_ID1"))
+//        aa.print(results.getString("B1_PER_ID2"))
+//        aa.print(results.getString("B1_PER_ID3"))
+//        thisCap.B1_PER_ID1 = results.getString("B1_PER_ID1");
+//        thisCap.B1_PER_ID2 = results.getString("B1_PER_ID2");
+//        thisCap.B1_PER_ID3 = results.getString("B1_PER_ID3");
+//        thisCap.TrackingID = results.getString("ATTRIBUTE_VALUE");
+//        capArray.push(thisCap)
+//    }
+//    dbStmt.close();
+//}
+//catch (err) {
+//    logDebug(err.message);
+//    if (typeof dbStmt != "undefined") dbStmt.close();
+//}
+//conn.close()
+
+//function capsAndTracking() {
+
+//    this.B1_PER_ID1 = "";
+//    this.B1_PER_ID2 = "";
+//    this.B1_PER_ID3 = "";
+//    this.TrackingID = "";
+//}
+
+//for (x in capArray) {
+//    aa.print(capArray[x].B1_PER_ID1);
+//	var capId = aa.cap.getCapID(capArray[x].B1_PER_ID1, capArray[x].B1_PER_ID2, capArray[x].B1_PER_ID3).getOutput();
+//	var USPSTable = loadASITable("USPS TRACKING", capId);
+
+//	for (var x in USPSTable) {
+
+//		USPSTable[x]["Signature Document"] = "https://winsalem-supp-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24744178&fileKey=A01000000283191E5C3H4W0YE2WE62&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003LT&altID=DEM-20-00004&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7701+6760.pdf";
+//	}
+//	removeASITable("USPS TRACKING", capId);
+//	addASITable("USPS TRACKING", USPSTable, capId);
+
+//}
+var capId = aa.cap.getCapID("VEH-21-00001").getOutput();
+var USPSTable = loadASITable("USPS TRACKING", capId);
+
+for (var x in USPSTable) {
+
+	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820828&fileKey=A01000000232541WM8J9RJNCNZKJM4&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC21-00000-00023&altID=VEH-21-00001&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5663.pdf";
 }
-catch (err) {
-    logDebug(err.message);
-    if (typeof dbStmt != "undefined") dbStmt.close();
+removeASITable("USPS TRACKING", capId);
+addASITable("USPS TRACKING", USPSTable, capId);
+
+var capId = aa.cap.getCapID("VST-20-00015").getOutput();
+var USPSTable = loadASITable("USPS TRACKING", capId);
+
+for (var x in USPSTable) {
+
+	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820849&fileKey=A01000000232542OZEH9YJBPPJXKXS&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003IG&altID=VST-20-00015&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5700.pdf";
 }
-conn.close()
+removeASITable("USPS TRACKING", capId);
+addASITable("USPS TRACKING", USPSTable, capId);
 
-function capsAndTracking() {
+var capId = aa.cap.getCapID("GRF-20-00029").getOutput();
+var USPSTable = loadASITable("USPS TRACKING", capId);
 
-    this.B1_PER_ID1 = "";
-    this.B1_PER_ID2 = "";
-    this.B1_PER_ID3 = "";
-    this.TrackingID = "";
+for (var x in USPSTable) {
+
+	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820850&fileKey=A01000000232530MEQGHP2CHFLO4QD&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003ES&altID=GRF-20-00029&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5793.pdf";
 }
+removeASITable("USPS TRACKING", capId);
+addASITable("USPS TRACKING", USPSTable, capId);
 
-for (x in capArray) {
-    aa.print(capArray[x].B1_PER_ID1);
-	var capId = aa.cap.getCapID(capArray[x].B1_PER_ID1, capArray[x].B1_PER_ID2, capArray[x].B1_PER_ID3).getOutput();
-	var USPSTable = loadASITable("USPS TRACKING", capId);
+var capId = aa.cap.getCapID("2020120296").getOutput();
+var USPSTable = loadASITable("USPS TRACKING", capId);
 
-	for (var x in USPSTable) {
+for (var x in USPSTable) {
 
-		USPSTable[x]["Signature Document"] = "https://winsalem-supp-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24744178&fileKey=A01000000283191E5C3H4W0YE2WE62&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003LT&altID=DEM-20-00004&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7701+6760.pdf";
-	}
-	removeASITable("USPS TRACKING", capId);
-	addASITable("USPS TRACKING", USPSTable, capId);
-
+	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820851&fileKey=A01000000232545OSGNLKNIJVSTODH&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=20HWS-00000-0001N&altID=2020120296&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5847.pdf";
 }
+removeASITable("USPS TRACKING", capId);
+addASITable("USPS TRACKING", USPSTable, capId);
 //REC20-00000-003DP
 //var capIDs = aa.cap.getCapIDsByAppSpecificInfoField("Tracking Number", "9171999991703877016760").getOutput();
 //var capIDs = aa.cap.getCapIDsByAppSpecificInfoField("Tow Company Name", "test").getOutput();
