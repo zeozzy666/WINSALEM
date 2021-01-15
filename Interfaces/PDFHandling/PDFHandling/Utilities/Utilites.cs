@@ -77,10 +77,7 @@ namespace PDFHandling.Utilities
                     Console.Write(text.Text + " ");
                     String trackingID = "91" + text.Text.Substring(0, 24).Replace(" ", "");
                     trackingNumbers.Add(trackingID);
-                    //7199 9991 7038 7701 6760 11/23/2020 at 08:03 am pod1130
-                    //9171999991703877016760
-                    //7199 9991 7039 3496 8445
-                    //9171999991703934968445
+                   
                 }
 
                 return trackingNumbers;
@@ -92,7 +89,60 @@ namespace PDFHandling.Utilities
             }
         }
 
-     
+        public static Dictionary<String, String> GetFileNames(String[] trackingIDsArray)
+        {
+            try
+            {
+
+                // Open document toc011121
+                Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + "toc011121.pdf", ConfigurationManager.AppSettings["USPSFilePassword"]);
+
+                int count = 0;
+                System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(".*?\n");
+                //System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(trackingNumber + ".*?\n");
+                TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber(regex); //
+                                                                                             // Accept the absorber for all the pages
+                pdfDocument.Pages.Accept(textFragmentAbsorber);
+                // Get the extracted text fragments
+                Dictionary<String, String> trackingNumbers = new Dictionary<String, String>();
+
+                
+
+                TextFragmentCollection textFragmentCollection = textFragmentAbsorber.TextFragments;
+                
+                foreach (TextFragment text in textFragmentCollection)
+                {
+                    
+                    Console.Write(text.Text + " ");
+                    //7199 9991 7038 7689 5649 12/29/2020 at 03:24 pm pod0104210001
+                    String trackID = "91" + text.Text.Substring(0, 24).Replace(" ", "");
+                    
+                    if (trackingIDsArray.Contains(trackID)) {
+
+                        String fileName = text.Text.Substring(text.Text.IndexOf("pod"));
+                        trackingNumbers.Add(trackID, fileName);
+                        count++;
+                    }
+                    if (count == trackingIDsArray.Length)
+                    {
+                        break;
+                    }
+
+                    //7199 9991 7038 7701 6760 11/23/2020 at 08:03 am pod1130
+                    //9171999991703877016760
+                    //7199 9991 7039 3496 8445
+                    //9171999991703934968445
+                }
+
+
+                return trackingNumbers;
+            }
+            catch (Exception ex)
+            {
+                log.Debug("Application threw an error processing document:" + ex.Message);
+                return null;
+            }
+        }
         public static byte[] SplitPages(String fileName, String trackingID)
         {
             String trackimgIDToSearch = trackingID.Substring(2);
@@ -148,7 +198,7 @@ namespace PDFHandling.Utilities
             {
                 using (FileStream SourceStream = File.Open(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
                 {
-                    
+
                     using (var memoryStream = new MemoryStream())
                     {
                         SourceStream.CopyTo(memoryStream);
@@ -164,7 +214,7 @@ namespace PDFHandling.Utilities
             }
 
 
-           // return "done";
+            // return "done";
         }
 
         public static void DeleteFiles(String fileName)

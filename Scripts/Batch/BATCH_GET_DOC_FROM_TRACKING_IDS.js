@@ -1,27 +1,205 @@
 // JavaScript source code
-//try {
-//    var apiURL = "http://192.168.1.69/api/PDFRetrieve/GetConfirmationDocument/pod1130200001.pdf/9171999991703877016760"; //lookup("ProjectDox_Configuration", "CreateProjectURL")66443410
-//    //var apiURL = "https://pdx.usps.com/api/outbound-files/extracts";
-//    var headers = aa.util.newHashMap();
-//    headers.put("Content-Type", "application/json");
-//    //headers.put("Authorization", "Basic Y293c2NiZDpDaXR5b2ZXaW5zdG9uIzE =")
-//    logDebug("Calling to create project")
-//    var result = aa.httpClient.get(apiURL, headers);
 
-//    if (result.getSuccess()) {
-//        result = result.getOutput();
-//    } else {
-//        //aa.sendMail(lookup("ProjectDox_Configuration", "ErrorFromEmail"), lookup("ProjectDox_Configuration", "ErrorRecipientEmail"), "", "Error in ProjectDox", "Error creating project in ProjectDox: " + result.getErrorMessage() + ". Cannot create project for record: " + capIDString)
-//        logDebug("Error creating project in ProjectDox: " + result.getErrorMessage());
-//        //return null;
-//    }
+/* Functionality
+ * Find all records where ASIT tracking ID != null and Signature Document = null
+ * Create separate list of tracking numbers only
+ *		Call GetFileNamesTrackingID/current date (or last Monday before today)
+ *			Returns list of tracking number/fileName
+ *			If list length returned is less than the list we sent, 
+ *				find the last Monday of the previous year and call GetFileNamesTrackingID with that monday
+ *			Concatenate the lists
+ *			Update the record list with correct filenames
+ * Go through each record and get pod file if populated.
+ * 
+ */
+
+//Find all records where ASIT tracking ID != null and Signature Document = null
+var capArray = new Array();
+var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
+var ds = initialContext.lookup("java:/WINSALEM");
+var conn = ds.getConnection();
+//Unable to get managed connection for java:/AA
+//conn.close()
+var servProvCode = aa.getServiceProviderCode();
+try {
+    //var SQL = "Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Signature Document' And SERV_PROV_CODE = 'WINSALEM'"
+    //var SQL = "Select * From BAPPSPECTABLE_VALUE sg Where sg.COLUMN_NAME = 'Signature Document' And (sg.TTRIBUTE_VALUE Is Null Or sg.ATTRIBUTE_VALUE = '') And SERV_PROV_CODE = 'WINSALEM'"
+    var SQL = "Select sg.B1_PER_ID1 as B1_PER_ID1, sg.B1_PER_ID2 as B1_PER_ID2, sg.B1_PER_ID3 as B1_PER_ID3,sg.ATTRIBUTE_VALUE as signature, tn.ATTRIBUTE_VALUE as tracking, sg.B1_PER_ID3 From BAPPSPECTABLE_VALUE sg Inner Join (Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE Is Not Null And SERV_PROV_CODE = 'WINSALEM')tn On sg.B1_PER_ID3 = tn.B1_PER_ID3 Where sg.COLUMN_NAME = 'Signature Document' And (sg.ATTRIBUTE_VALUE Is Null Or sg.ATTRIBUTE_VALUE = '') And sg.ROW_INDEX = tn.ROW_INDEX And sg.SERV_PROV_CODE = 'WINSALEM'"
+    //var SQL = "Select * From BAPPSPECTABLE_VALUE tn Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE Is Not Null And SERV_PROV_CODE = 'WINSALEM'"
+    var dbStmt = conn.prepareStatement(SQL);
+
+    dbStmt.executeQuery();
+    results = dbStmt.getResultSet()
+    while (results.next()) {
+        var thisCap = new capsAndTracking();
+        //aa.print(results.getString("ATTRIBUTE_VALUE"))
+        //aa.print(results.getString("COLUMN_NAME"))
+        //aa.print(results.getString("B1_PER_ID1"))
+        //aa.print(results.getString("B1_PER_ID2"))
+        //aa.print(results.getString("B1_PER_ID3"))
+        thisCap.B1_PER_ID1 = results.getString("B1_PER_ID1");
+        thisCap.B1_PER_ID2 = results.getString("B1_PER_ID2");
+        thisCap.B1_PER_ID3 = results.getString("B1_PER_ID3");
+        thisCap.TrackingID = results.getString("tracking");
+        thisCap.FileName = results.getString("signature");
+        capArray.push(thisCap)
+    }
+    dbStmt.close();
+}
+catch (err) {
+    logDebug(err.message);
+    if (typeof dbStmt != "undefined") dbStmt.close();
+}
+finally {
+
+    conn.close()
+}
+
+aa.print(capArray.length)
+
+var trackingIDsForWebService = "";
+for (x in capArray) {
+    aa.print(capArray[x].B1_PER_ID1 + "-" + capArray[x].B1_PER_ID2 + "-" + capArray[x].B1_PER_ID3 + " " + capArray[x].TrackingID + " " + capArray[x].FileName)
+    if (x < capArray.length - 1) {
+        trackingIDsForWebService += capArray[x].TrackingID + ',';
+    }
+    else {
+        trackingIDsForWebService += capArray[x].TrackingID
+    }
+}
+aa.print(trackingIDsForWebService)
+
+//GetFileNamesTrackingID
+//GetConfirmationDocument
+var today = new Date();
+//formatDate - MMDDYY
+//aa.print(aa.util.formatDate(today, "MMDDYY"))
+var dateString = aa.util.formatDate(today, "MMDDYY")
+//or use specifc date
+dateString = "011121"
+var fileName = "toc" + dateString + ".pdf"
+var webServiceReturn = callPDFService(GetFileNamesTrackingID, fileName, trackingIDsForWebService)
+
+var webServiceReturn = '{"9171999991703876895656":"pod0104210001","9171999991703876895663":"pod0111210001","9171999991703876895700":"pod0111210001","9171999991703876895793":"pod0111210001"}'
+//var webServiceReturn = '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">{"9171999991703876895656":"pod0104210001","9171999991703876895663":"pod0111210001","9171999991703876895700":"pod0111210001","9171999991703876895793":"pod0111210001"}</string>'
+
+var returnObj = JSON.parse(webServiceReturn)
+for (x in returnObj) aa.print(x + ":" + returnObj[x])
+logDebug(Object.keys(returnObj).length)
+//logDebug(returnObj["9171999991703876895656"])
+for (z in capArray) {
+    logDebug(capArray[z].TrackingID)
+    capArray[z].FileName = returnObj[capArray[z].TrackingID]
+    logDebug(capArray[z].FileName)
+}
+
+//Did we get all of the filenames that we wanted?
+if (Object.keys(returnObj).length != capArray.length) {
+    //Possible missing items from the year before
+    //Cal web service again with last file dated last Monday of the year before
+    dateString = "122820"
+    var fileName = "toc" + dateString + ".pdf"
+    var webServiceReturn = callPDFService(GetFileNamesTrackingID, fileName, trackingIDsForWebService)
+    var returnObj = JSON.parse(webServiceReturn)
+    for (x in returnObj) aa.print(x + ":" + returnObj[x])
+    logDebug(Object.keys(returnObj).length)
+    //logDebug(returnObj["9171999991703876895656"])
+    for (z in capArray) {
+        logDebug(capArray[z].TrackingID)
+        capArray[z].FileName = returnObj[capArray[z].TrackingID]
+        logDebug(capArray[z].FileName)
+    }
+}
+
+//At this point we have the capArray all set to get documents and attach to record
+for (x in capArray) {
+//    aa.print(capArray[x].B1_PER_ID1);
+	var capId = aa.cap.getCapID(capArray[x].B1_PER_ID1, capArray[x].B1_PER_ID2, capArray[x].B1_PER_ID3).getOutput();
+    var USPSTable = loadASITable("USPS TRACKING", capId);
+    var docBytes = callPDFService(GetConfirmationDocument, capArray[x].fileName + ".pdf", capArray[x].TrackingID)
+    //Upload to record
+    //Add link to table
+
+//	for (var x in USPSTable) {
+
+//		USPSTable[x]["Signature Document"] = "https://winsalem-supp-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24744178&fileKey=A01000000283191E5C3H4W0YE2WE62&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003LT&altID=DEM-20-00004&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7701+6760.pdf";
+//	}
+//	removeASITable("USPS TRACKING", capId);
+//	addASITable("USPS TRACKING", USPSTable, capId);
+
 //}
-//catch (ex) {
-//    logDebug(ex.message)
+//var capId = aa.cap.getCapID("VEH-21-00001").getOutput();
+//var USPSTable = loadASITable("USPS TRACKING", capId);
+
+//for (var x in USPSTable) {
+
+//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820828&fileKey=A01000000232541WM8J9RJNCNZKJM4&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC21-00000-00023&altID=VEH-21-00001&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5663.pdf";
 //}
+//removeASITable("USPS TRACKING", capId);
+//addASITable("USPS TRACKING", USPSTable, capId);
+
+//var capId = aa.cap.getCapID("VST-20-00015").getOutput();
+//var USPSTable = loadASITable("USPS TRACKING", capId);
+
+//for (var x in USPSTable) {
+
+//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820849&fileKey=A01000000232542OZEH9YJBPPJXKXS&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003IG&altID=VST-20-00015&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5700.pdf";
+//}
+//removeASITable("USPS TRACKING", capId);
+//addASITable("USPS TRACKING", USPSTable, capId);
+
+//var capId = aa.cap.getCapID("GRF-20-00029").getOutput();
+//var USPSTable = loadASITable("USPS TRACKING", capId);
+
+//for (var x in USPSTable) {
+
+//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820850&fileKey=A01000000232530MEQGHP2CHFLO4QD&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003ES&altID=GRF-20-00029&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5793.pdf";
+//}
+//removeASITable("USPS TRACKING", capId);
+//addASITable("USPS TRACKING", USPSTable, capId);
+
+//var capId = aa.cap.getCapID("2020120296").getOutput();
+//var USPSTable = loadASITable("USPS TRACKING", capId);
+
+//for (var x in USPSTable) {
+
+//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820851&fileKey=A01000000232545OSGNLKNIJVSTODH&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=20HWS-00000-0001N&altID=2020120296&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5847.pdf";
+//}
+//removeASITable("USPS TRACKING", capId);
+//addASITable("USPS TRACKING", USPSTable, capId);
+}
+
+//GetFileNamesTrackingID
+//GetConfirmationDocument
+function callPDFService(serviceName, fileName, trackingIDsForWebService) {
+
+    try {
+        var apiURL = "http://192.168.1.69/api/PDFRetrieve/"; //use lookup("ProjectDox_Configuration", "CreateProjectURL")66443410
+        apiURL = apiURL + serviceName + "/" + fileName + "/" + trackingIDsForWebService; 
+        var headers = aa.util.newHashMap();
+        headers.put("Content-Type", "application/json");
+        //headers.put("Authorization", "Basic Y293c2NiZDpDaXR5b2ZXaW5zdG9uIzE =")
+        logDebug("Calling to create project")
+        var result = aa.httpClient.get(apiURL, headers);
+
+        if (result.getSuccess()) {
+            result = result.getOutput();
+            return result;
+        } else {
+            //aa.sendMail(lookup("ProjectDox_Configuration", "ErrorFromEmail"), lookup("ProjectDox_Configuration", "ErrorRecipientEmail"), "", "Error in ProjectDox", "Error creating project in ProjectDox: " + result.getErrorMessage() + ". Cannot create project for record: " + capIDString)
+            logDebug("Error creating project in ProjectDox: " + result.getErrorMessage());
+            return null;
+        }
+    }
+    catch (ex) {
+        logDebug(ex.message)
+    }
+}
+
 function logDebug(z) {
     aa.print(z)
 }
+
 
 //var trackingNumber = "(9171999991703877016760,9171999991703877306533)"
 //var trackingFromService = '<ArrayOfstring xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">\
@@ -46,6 +224,9 @@ function logDebug(z) {
 var currentUserID = "ADMIN"
 //var capArray = new Array();
 
+
+
+/** Gets records by tracking ID */
 //var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
 //var ds = initialContext.lookup("java:/WINSALEM");
 //var conn = ds.getConnection();
@@ -55,7 +236,7 @@ var currentUserID = "ADMIN"
 //try {
 //    var SQL = "Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE In " + trackingNumber + " And SERV_PROV_CODE = 'WINSALEM'"
 //    var dbStmt = conn.prepareStatement(SQL);
-    
+
 //    dbStmt.executeQuery();
 //    results = dbStmt.getResultSet()
 //    while (results.next()) {
@@ -79,13 +260,15 @@ var currentUserID = "ADMIN"
 //}
 //conn.close()
 
-//function capsAndTracking() {
 
-//    this.B1_PER_ID1 = "";
-//    this.B1_PER_ID2 = "";
-//    this.B1_PER_ID3 = "";
-//    this.TrackingID = "";
-//}
+function capsAndTracking() {
+
+    this.B1_PER_ID1 = "";
+    this.B1_PER_ID2 = "";
+    this.B1_PER_ID3 = "";
+    this.TrackingID = "";
+    this.FileName = "";
+}
 
 //for (x in capArray) {
 //    aa.print(capArray[x].B1_PER_ID1);
@@ -100,45 +283,45 @@ var currentUserID = "ADMIN"
 //	addASITable("USPS TRACKING", USPSTable, capId);
 
 //}
-var capId = aa.cap.getCapID("VEH-21-00001").getOutput();
-var USPSTable = loadASITable("USPS TRACKING", capId);
+//var capId = aa.cap.getCapID("VEH-21-00001").getOutput();
+//var USPSTable = loadASITable("USPS TRACKING", capId);
 
-for (var x in USPSTable) {
+//for (var x in USPSTable) {
 
-	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820828&fileKey=A01000000232541WM8J9RJNCNZKJM4&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC21-00000-00023&altID=VEH-21-00001&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5663.pdf";
-}
-removeASITable("USPS TRACKING", capId);
-addASITable("USPS TRACKING", USPSTable, capId);
+//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820828&fileKey=A01000000232541WM8J9RJNCNZKJM4&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC21-00000-00023&altID=VEH-21-00001&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5663.pdf";
+//}
+//removeASITable("USPS TRACKING", capId);
+//addASITable("USPS TRACKING", USPSTable, capId);
 
-var capId = aa.cap.getCapID("VST-20-00015").getOutput();
-var USPSTable = loadASITable("USPS TRACKING", capId);
+//var capId = aa.cap.getCapID("VST-20-00015").getOutput();
+//var USPSTable = loadASITable("USPS TRACKING", capId);
 
-for (var x in USPSTable) {
+//for (var x in USPSTable) {
 
-	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820849&fileKey=A01000000232542OZEH9YJBPPJXKXS&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003IG&altID=VST-20-00015&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5700.pdf";
-}
-removeASITable("USPS TRACKING", capId);
-addASITable("USPS TRACKING", USPSTable, capId);
+//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820849&fileKey=A01000000232542OZEH9YJBPPJXKXS&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003IG&altID=VST-20-00015&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5700.pdf";
+//}
+//removeASITable("USPS TRACKING", capId);
+//addASITable("USPS TRACKING", USPSTable, capId);
 
-var capId = aa.cap.getCapID("GRF-20-00029").getOutput();
-var USPSTable = loadASITable("USPS TRACKING", capId);
+//var capId = aa.cap.getCapID("GRF-20-00029").getOutput();
+//var USPSTable = loadASITable("USPS TRACKING", capId);
 
-for (var x in USPSTable) {
+//for (var x in USPSTable) {
 
-	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820850&fileKey=A01000000232530MEQGHP2CHFLO4QD&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003ES&altID=GRF-20-00029&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5793.pdf";
-}
-removeASITable("USPS TRACKING", capId);
-addASITable("USPS TRACKING", USPSTable, capId);
+//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820850&fileKey=A01000000232530MEQGHP2CHFLO4QD&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003ES&altID=GRF-20-00029&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5793.pdf";
+//}
+//removeASITable("USPS TRACKING", capId);
+//addASITable("USPS TRACKING", USPSTable, capId);
 
-var capId = aa.cap.getCapID("2020120296").getOutput();
-var USPSTable = loadASITable("USPS TRACKING", capId);
+//var capId = aa.cap.getCapID("2020120296").getOutput();
+//var USPSTable = loadASITable("USPS TRACKING", capId);
 
-for (var x in USPSTable) {
+//for (var x in USPSTable) {
 
-	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820851&fileKey=A01000000232545OSGNLKNIJVSTODH&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=20HWS-00000-0001N&altID=2020120296&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5847.pdf";
-}
-removeASITable("USPS TRACKING", capId);
-addASITable("USPS TRACKING", USPSTable, capId);
+//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820851&fileKey=A01000000232545OSGNLKNIJVSTODH&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=20HWS-00000-0001N&altID=2020120296&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5847.pdf";
+//}
+//removeASITable("USPS TRACKING", capId);
+//addASITable("USPS TRACKING", USPSTable, capId);
 //REC20-00000-003DP
 //var capIDs = aa.cap.getCapIDsByAppSpecificInfoField("Tracking Number", "9171999991703877016760").getOutput();
 //var capIDs = aa.cap.getCapIDsByAppSpecificInfoField("Tow Company Name", "test").getOutput();
@@ -191,144 +374,144 @@ addASITable("USPS TRACKING", USPSTable, capId);
 
 function removeASITable(tableName) // optional capId
 {
-	//  tableName is the name of the ASI table
-	//  tableValues is an associative array of values.  All elements MUST be strings.
-	var itemCap = capId
-	if (arguments.length > 1)
-		itemCap = arguments[1]; // use cap ID specified in args
+    //  tableName is the name of the ASI table
+    //  tableValues is an associative array of values.  All elements MUST be strings.
+    var itemCap = capId
+    if (arguments.length > 1)
+        itemCap = arguments[1]; // use cap ID specified in args
 
-	var tssmResult = aa.appSpecificTableScript.removeAppSpecificTableInfos(tableName, itemCap, currentUserID)
+    var tssmResult = aa.appSpecificTableScript.removeAppSpecificTableInfos(tableName, itemCap, currentUserID)
 
-	if (!tssmResult.getSuccess()) { aa.print("**WARNING: error removing ASI table " + tableName + " " + tssmResult.getErrorMessage()); return false }
-	else
-		logDebug("Successfully removed all rows from ASI Table: " + tableName);
+    if (!tssmResult.getSuccess()) { aa.print("**WARNING: error removing ASI table " + tableName + " " + tssmResult.getErrorMessage()); return false }
+    else
+        logDebug("Successfully removed all rows from ASI Table: " + tableName);
 
 }
 
 function addASITable(tableName, tableValueArray) // optional capId
 {
-	//  tableName is the name of the ASI table
-	//  tableValueArray is an array of associative array values.  All elements MUST be either a string or asiTableVal object
-	var itemCap = capId
-	if (arguments.length > 2)
-		itemCap = arguments[2]; // use cap ID specified in args
+    //  tableName is the name of the ASI table
+    //  tableValueArray is an array of associative array values.  All elements MUST be either a string or asiTableVal object
+    var itemCap = capId
+    if (arguments.length > 2)
+        itemCap = arguments[2]; // use cap ID specified in args
 
-	var tssmResult = aa.appSpecificTableScript.getAppSpecificTableModel(itemCap, tableName)
+    var tssmResult = aa.appSpecificTableScript.getAppSpecificTableModel(itemCap, tableName)
 
-	if (!tssmResult.getSuccess()) {
-		logDebug("**WARNING: error retrieving app specific table " + tableName + " " + tssmResult.getErrorMessage());
-		return false
-	}
+    if (!tssmResult.getSuccess()) {
+        logDebug("**WARNING: error retrieving app specific table " + tableName + " " + tssmResult.getErrorMessage());
+        return false
+    }
 
-	var tssm = tssmResult.getOutput();
-	var tsm = tssm.getAppSpecificTableModel();
-	var fld = tsm.getTableField();
-	var fld_readonly = tsm.getReadonlyField(); // get Readonly field
+    var tssm = tssmResult.getOutput();
+    var tsm = tssm.getAppSpecificTableModel();
+    var fld = tsm.getTableField();
+    var fld_readonly = tsm.getReadonlyField(); // get Readonly field
 
-	for (thisrow in tableValueArray) {
+    for (thisrow in tableValueArray) {
 
-		var col = tsm.getColumns()
-		var coli = col.iterator();
-		while (coli.hasNext()) {
-			var colname = coli.next();
+        var col = tsm.getColumns()
+        var coli = col.iterator();
+        while (coli.hasNext()) {
+            var colname = coli.next();
 
-			if (!tableValueArray[thisrow][colname.getColumnName()]) {
-				logDebug("addToASITable: null or undefined value supplied for column " + colname.getColumnName() + ", setting to empty string");
-				tableValueArray[thisrow][colname.getColumnName()] = "";
-			}
+            if (!tableValueArray[thisrow][colname.getColumnName()]) {
+                logDebug("addToASITable: null or undefined value supplied for column " + colname.getColumnName() + ", setting to empty string");
+                tableValueArray[thisrow][colname.getColumnName()] = "";
+            }
 
-			if (typeof (tableValueArray[thisrow][colname.getColumnName()].fieldValue) != "undefined") // we are passed an asiTablVal Obj
-			{
-				fld.add(tableValueArray[thisrow][colname.getColumnName()].fieldValue);
-				fld_readonly.add(tableValueArray[thisrow][colname.getColumnName()].readOnly);
-				//fld_readonly.add(null);
-			} else // we are passed a string
-			{
-				fld.add(tableValueArray[thisrow][colname.getColumnName()]);
-				fld_readonly.add(null);
-			}
-		}
+            if (typeof (tableValueArray[thisrow][colname.getColumnName()].fieldValue) != "undefined") // we are passed an asiTablVal Obj
+            {
+                fld.add(tableValueArray[thisrow][colname.getColumnName()].fieldValue);
+                fld_readonly.add(tableValueArray[thisrow][colname.getColumnName()].readOnly);
+                //fld_readonly.add(null);
+            } else // we are passed a string
+            {
+                fld.add(tableValueArray[thisrow][colname.getColumnName()]);
+                fld_readonly.add(null);
+            }
+        }
 
-		tsm.setTableField(fld);
+        tsm.setTableField(fld);
 
-		tsm.setReadonlyField(fld_readonly);
+        tsm.setReadonlyField(fld_readonly);
 
-	}
+    }
 
-	var addResult = aa.appSpecificTableScript.editAppSpecificTableInfos(tsm, itemCap, currentUserID);
+    var addResult = aa.appSpecificTableScript.editAppSpecificTableInfos(tsm, itemCap, currentUserID);
 
-	if (!addResult.getSuccess()) {
-		logDebug("**WARNING: error adding record to ASI Table:  " + tableName + " " + addResult.getErrorMessage());
-		return false
-	} else
-		logDebug("Successfully added record to ASI Table: " + tableName);
+    if (!addResult.getSuccess()) {
+        logDebug("**WARNING: error adding record to ASI Table:  " + tableName + " " + addResult.getErrorMessage());
+        return false
+    } else
+        logDebug("Successfully added record to ASI Table: " + tableName);
 
 }
 
 function loadASITable(tname) {
 
-	//
-	// Returns a single ASI Table array of arrays
-	// Optional parameter, cap ID to load from
-	//
+    //
+    // Returns a single ASI Table array of arrays
+    // Optional parameter, cap ID to load from
+    //
 
-	var itemCap = capId;
-	if (arguments.length == 2) itemCap = arguments[1]; // use cap ID specified in args
+    var itemCap = capId;
+    if (arguments.length == 2) itemCap = arguments[1]; // use cap ID specified in args
 
-	var gm = aa.appSpecificTableScript.getAppSpecificTableGroupModel(itemCap).getOutput();
-	var ta = gm.getTablesArray()
-	var tai = ta.iterator();
+    var gm = aa.appSpecificTableScript.getAppSpecificTableGroupModel(itemCap).getOutput();
+    var ta = gm.getTablesArray()
+    var tai = ta.iterator();
 
-	while (tai.hasNext()) {
-		var tsm = tai.next();
-		var tn = tsm.getTableName();
+    while (tai.hasNext()) {
+        var tsm = tai.next();
+        var tn = tsm.getTableName();
 
-		if (!tn.equals(tname)) continue;
+        if (!tn.equals(tname)) continue;
 
-		if (tsm.rowIndex.isEmpty()) {
-			logDebug("Couldn't load ASI Table " + tname + " it is empty");
-			return false;
-		}
+        if (tsm.rowIndex.isEmpty()) {
+            logDebug("Couldn't load ASI Table " + tname + " it is empty");
+            return false;
+        }
 
-		var tempObject = new Array();
-		var tempArray = new Array();
+        var tempObject = new Array();
+        var tempArray = new Array();
 
-		var tsmfldi = tsm.getTableField().iterator();
-		var tsmcoli = tsm.getColumns().iterator();
-		var readOnlyi = tsm.getAppSpecificTableModel().getReadonlyField().iterator(); // get Readonly filed
-		var numrows = 1;
+        var tsmfldi = tsm.getTableField().iterator();
+        var tsmcoli = tsm.getColumns().iterator();
+        var readOnlyi = tsm.getAppSpecificTableModel().getReadonlyField().iterator(); // get Readonly filed
+        var numrows = 1;
 
-		while (tsmfldi.hasNext())  // cycle through fields
-		{
-			if (!tsmcoli.hasNext())  // cycle through columns
-			{
-				var tsmcoli = tsm.getColumns().iterator();
-				tempArray.push(tempObject);  // end of record
-				var tempObject = new Array();  // clear the temp obj
-				numrows++;
-			}
-			var tcol = tsmcoli.next();
-			var tval = tsmfldi.next();
-			var readOnly = 'N';
-			if (readOnlyi.hasNext()) {
-				readOnly = readOnlyi.next();
-			}
-			var fieldInfo = new asiTableValObj(tcol.getColumnName(), tval, readOnly);
-			tempObject[tcol.getColumnName()] = fieldInfo;
+        while (tsmfldi.hasNext())  // cycle through fields
+        {
+            if (!tsmcoli.hasNext())  // cycle through columns
+            {
+                var tsmcoli = tsm.getColumns().iterator();
+                tempArray.push(tempObject);  // end of record
+                var tempObject = new Array();  // clear the temp obj
+                numrows++;
+            }
+            var tcol = tsmcoli.next();
+            var tval = tsmfldi.next();
+            var readOnly = 'N';
+            if (readOnlyi.hasNext()) {
+                readOnly = readOnlyi.next();
+            }
+            var fieldInfo = new asiTableValObj(tcol.getColumnName(), tval, readOnly);
+            tempObject[tcol.getColumnName()] = fieldInfo;
 
-		}
-		tempArray.push(tempObject);  // end of record
-	}
-	return tempArray;
+        }
+        tempArray.push(tempObject);  // end of record
+    }
+    return tempArray;
 }
 
 function asiTableValObj(columnName, fieldValue, readOnly) {
-	this.columnName = columnName;
-	this.fieldValue = fieldValue;
-	this.readOnly = readOnly;
-	this.hasValue = Boolean(fieldValue != null & fieldValue != "");
+    this.columnName = columnName;
+    this.fieldValue = fieldValue;
+    this.readOnly = readOnly;
+    this.hasValue = Boolean(fieldValue != null & fieldValue != "");
 
-	asiTableValObj.prototype.toString = function () { return this.hasValue ? String(this.fieldValue) : String(""); }
+    asiTableValObj.prototype.toString = function () { return this.hasValue ? String(this.fieldValue) : String(""); }
 };
 
 

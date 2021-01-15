@@ -9,13 +9,14 @@ using PDFHandling.Models;
 using PDFHandling.Utilities;
 using System.IO;
 using log4net;
+using Newtonsoft.Json;
 
 namespace PDFHandling.Controllers
 {
     public class PDFRetrieveController : ApiController
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        public List<String> GetTrackingIDs(String fileName)
+        public String GetTrackingIDs(String fileName)
         {
             log.Debug("In Controller gettting list of tracking numbers");
             try
@@ -29,11 +30,35 @@ namespace PDFHandling.Controllers
             }
             Utilites.getUSPSDocument(fileName);
             List<String> returnList = Utilites.ProcessDocument(fileName);
-            return returnList;
+            String jsonObj = JsonConvert.SerializeObject(returnList);
+            return jsonObj;
 
-        //http://192.168.1.69/api/PDFRetrieve/GetTrackingIDs/toc113020.pdf/1
-        //https://de-winston-salem.azurewebsites.net/
-       // https://localhost:44359/api/PDFRetrieve/GetTrackingIDs/toc011121.pdf/1
+            //http://192.168.1.69/api/PDFRetrieve/GetTrackingIDs/toc113020.pdf/1
+            //https://de-winston-salem.azurewebsites.net/
+            // https://localhost:44359/api/PDFRetrieve/GetTrackingIDs/toc011121.pdf/1
+        }
+
+        public String GetFileNamesTrackingID(String fileName, String trackingID)
+        {
+            log.Debug("In Controller gettting list of tracking numbers");
+            try
+            {
+                Utilites.SetLicenseExample();
+            }
+            catch (Exception ex)
+            {
+                log.Debug("Getting license threw an error:" + ex.Message);
+                return null;
+            }
+            Utilites.getUSPSDocument(fileName);
+            String[] trackingIDsArray = trackingID.Split(',');
+            Dictionary<String, String> returnList = Utilites.GetFileNames(trackingIDsArray);
+            String jsonObj = JsonConvert.SerializeObject(returnList);
+            return jsonObj;
+
+            //http://192.168.1.69/api/PDFRetrieve/GetTrackingIDs/toc113020.pdf/1
+            //https://de-winston-salem.azurewebsites.net/
+            // https://localhost:44359/api/PDFRetrieve/GetFileNamesTrackingID/toc011121.pdf/9171999991703876895663,9171999991703876895700,9171999991703876895793,9171999991703876895656
         }
 
         public byte[] GetConfirmationDocument(String fileName, String trackingID)
