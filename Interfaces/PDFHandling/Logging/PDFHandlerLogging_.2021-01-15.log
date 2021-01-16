@@ -1,3 +1,107 @@
 06:14:08,788 [9] [PDFHandling.Controllers.PDFRetrieveController] [GetTrackingIDs] DEBUG - In Controller gettting list of tracking numbers
 06:14:09,306 [9] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
 06:14:15,095 [9] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Application threw an error getting document from USPS:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\toc011121.pdf' because it is being used by another process.
+08:40:37,805 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+08:40:38,270 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:40:43,282 [5] [PDFHandling.Utilities.Utilites] [GetFileNames] DEBUG - Application threw an error processing document:Index and length must refer to a location within the string.
+Parameter name: length
+08:40:55,646 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+08:41:08,504 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:43:32,300 [5] [PDFHandling.Utilities.Utilites] [GetFileNames] DEBUG - Application threw an error processing document:Index and length must refer to a location within the string.
+Parameter name: length
+08:45:52,424 [21] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+08:45:55,384 [21] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:47:09,107 [21] [PDFHandling.Utilities.Utilites] [GetFileNames] DEBUG - Application threw an error processing document:Index and length must refer to a location within the string.
+Parameter name: length
+08:47:22,467 [21] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+08:47:22,470 [21] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:48:44,868 [21] [PDFHandling.Utilities.Utilites] [GetFileNames] DEBUG - Application threw an error processing document:Index and length must refer to a location within the string.
+Parameter name: length
+08:48:48,579 [21] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+08:48:48,585 [21] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:50:48,446 [21] [PDFHandling.Utilities.Utilites] [GetFileNames] DEBUG - Application threw an error processing document:Index and length must refer to a location within the string.
+Parameter name: length
+08:50:56,258 [21] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+08:50:56,265 [21] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:57:04,022 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+08:57:05,076 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+09:03:11,433 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+09:03:11,922 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+09:28:41,674 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+09:28:42,780 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+11:01:41,139 [62] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+11:01:41,196 [62] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+11:06:26,993 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetFileNamesTrackingID] DEBUG - In Controller gettting list of tracking numbers
+11:06:27,461 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+11:53:44,777 [29] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+11:53:44,843 [29] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+11:53:45,530 [29] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Application threw an error getting document from USPS:Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+11:53:45,531 [29] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+11:54:11,262 [29] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:Could not find file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\pod0113200001.pdf'.
+11:54:42,280 [50] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+11:54:42,287 [50] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+11:55:13,448 [50] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Application threw an error getting document from USPS:Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+11:55:13,448 [50] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+11:55:15,723 [50] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:Could not find file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\pod0113200001.pdf'.
+11:55:59,655 [50] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+11:55:59,668 [50] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+11:56:37,820 [50] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Application threw an error getting document from USPS:Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+11:56:37,821 [50] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+11:56:40,623 [50] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:Could not find file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\pod0113200001.pdf'.
+11:57:09,767 [29] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+11:57:09,778 [29] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+11:57:48,395 [29] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Application threw an error getting document from USPS:Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+11:57:48,396 [29] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+11:57:50,993 [29] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:Could not find file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\pod1130200001.pdf'.
+13:51:07,388 [14] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+13:51:07,401 [14] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+13:51:38,696 [14] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+13:55:01,574 [14] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+13:55:01,635 [14] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+14:09:12,529 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+14:09:12,960 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+14:09:23,186 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+14:09:25,261 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:09:25,290 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:10:39,735 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+14:10:40,206 [7] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+14:10:47,110 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+14:10:49,214 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:10:49,236 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:23:23,284 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+14:23:23,715 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+14:23:40,615 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+14:23:41,494 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:23:41,521 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:25:21,534 [14] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+14:25:21,600 [14] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+14:25:24,881 [14] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+14:25:36,852 [14] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:25:36,873 [14] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:27:42,434 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+14:27:42,439 [7] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+14:27:44,812 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+14:28:12,010 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error getting document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:28:12,036 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:The process cannot access the file 'C:\Users\mwells\Documents\GitHub\ps-client-WinstonSalemCity_NC\Interfaces\PDFHandling\PDFHandling\Documents\7199 9991 7038 7689 5663.pdf' because it is being used by another process.
+14:28:23,439 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+14:28:23,450 [7] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+14:28:25,606 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+16:25:16,692 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+16:25:17,115 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+16:25:19,628 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+16:26:48,718 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+16:26:48,771 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+16:26:53,537 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+16:28:04,567 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+16:28:04,572 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+16:28:18,753 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+16:30:32,338 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+16:30:32,753 [7] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+16:30:36,305 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+16:53:40,682 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+16:53:41,371 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+16:53:47,273 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system

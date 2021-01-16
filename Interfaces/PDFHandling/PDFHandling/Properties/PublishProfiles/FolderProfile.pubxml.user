@@ -92,10 +92,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/04/2021 10:32:17</publishTime>
     </File>
     <File Include="bin/PDFHandling.dll">
-      <publishTime>01/15/2021 06:15:21</publishTime>
+      <publishTime>01/15/2021 11:05:36</publishTime>
     </File>
     <File Include="bin/PDFHandling.pdb">
-      <publishTime>01/15/2021 06:15:21</publishTime>
+      <publishTime>01/15/2021 11:05:36</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
       <publishTime>01/04/2021 10:32:17</publishTime>

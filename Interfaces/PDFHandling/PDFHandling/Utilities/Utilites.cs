@@ -89,13 +89,13 @@ namespace PDFHandling.Utilities
             }
         }
 
-        public static Dictionary<String, String> GetFileNames(String[] trackingIDsArray)
+        public static Dictionary<String, String> GetFileNames(String fileName,String[] trackingIDsArray)
         {
             try
             {
 
                 // Open document toc011121
-                Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + "toc011121.pdf", ConfigurationManager.AppSettings["USPSFilePassword"]);
+                Document pdfDocument = new Document(HttpContext.Current.Server.MapPath("/Documents") + "/" + fileName, ConfigurationManager.AppSettings["USPSFilePassword"]);
 
                 int count = 0;
                 System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(".*?\n");
@@ -115,12 +115,16 @@ namespace PDFHandling.Utilities
                     
                     Console.Write(text.Text + " ");
                     //7199 9991 7038 7689 5649 12/29/2020 at 03:24 pm pod0104210001
+                    if (!text.Text.Contains("pod"))
+                    {
+                        continue;
+                    }
                     String trackID = "91" + text.Text.Substring(0, 24).Replace(" ", "");
                     
                     if (trackingIDsArray.Contains(trackID)) {
 
-                        String fileName = text.Text.Substring(text.Text.IndexOf("pod"));
-                        trackingNumbers.Add(trackID, fileName);
+                        String currentFileName = text.Text.Substring(text.Text.IndexOf("pod"));
+                        trackingNumbers.Add(trackID, currentFileName);
                         count++;
                     }
                     if (count == trackingIDsArray.Length)
@@ -196,16 +200,18 @@ namespace PDFHandling.Utilities
             }
             try
             {
-                using (FileStream SourceStream = File.Open(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
-                {
+                return File.ReadAllBytes(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf");
+                //using (FileStream SourceStream = File.Open(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
+                //{
+                //    //return SourceStream;
+                //    using (var memoryStream = new MemoryStream())
+                //    {
+                //        SourceStream.CopyTo(memoryStream);
+                //        //return memoryStream;
+                //        return memoryStream.ToArray();
+                //    }
 
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        SourceStream.CopyTo(memoryStream);
-                        return memoryStream.ToArray();
-                    }
-
-                }
+                //}
             }
             catch (Exception ex)
             {

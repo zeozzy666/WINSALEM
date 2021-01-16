@@ -13,177 +13,281 @@
  * 
  */
 
+//Test Data
+aa.env.setValue("tocFileDateToRun", "01/11/2021")
+aa.env.setValue("useParamDate", "true")
+
+//Get params from batch job
+var tocFileToRun = aa.env.getValue("tocFileDateToRun")
+var useParamDate = aa.env.getValue("useParamDate")
+var dateStringForFileName = "";
+var today = new Date();
+
+if (useParamDate == "true") {
+
+    var fileDate = new Date(tocFileToRun);
+    //formatDate - MMDDYY
+    dateStringForFileName = aa.util.formatDate(fileDate, "MMDDYY")
+}
+else {
+
+    //formatDate - MMDDYY
+    dateStringForFileName = aa.util.formatDate(today, "MMDDYY")
+}
+
+aa.print(dateStringForFileName)
+
 //Find all records where ASIT tracking ID != null and Signature Document = null
 var capArray = new Array();
-var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
-var ds = initialContext.lookup("java:/WINSALEM");
-var conn = ds.getConnection();
-//Unable to get managed connection for java:/AA
-//conn.close()
-var servProvCode = aa.getServiceProviderCode();
-try {
-    //var SQL = "Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Signature Document' And SERV_PROV_CODE = 'WINSALEM'"
-    //var SQL = "Select * From BAPPSPECTABLE_VALUE sg Where sg.COLUMN_NAME = 'Signature Document' And (sg.TTRIBUTE_VALUE Is Null Or sg.ATTRIBUTE_VALUE = '') And SERV_PROV_CODE = 'WINSALEM'"
-    var SQL = "Select sg.B1_PER_ID1 as B1_PER_ID1, sg.B1_PER_ID2 as B1_PER_ID2, sg.B1_PER_ID3 as B1_PER_ID3,sg.ATTRIBUTE_VALUE as signature, tn.ATTRIBUTE_VALUE as tracking, sg.B1_PER_ID3 From BAPPSPECTABLE_VALUE sg Inner Join (Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE Is Not Null And SERV_PROV_CODE = 'WINSALEM')tn On sg.B1_PER_ID3 = tn.B1_PER_ID3 Where sg.COLUMN_NAME = 'Signature Document' And (sg.ATTRIBUTE_VALUE Is Null Or sg.ATTRIBUTE_VALUE = '') And sg.ROW_INDEX = tn.ROW_INDEX And sg.SERV_PROV_CODE = 'WINSALEM'"
-    //var SQL = "Select * From BAPPSPECTABLE_VALUE tn Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE Is Not Null And SERV_PROV_CODE = 'WINSALEM'"
-    var dbStmt = conn.prepareStatement(SQL);
+var currentUserID = "ADMIN"
+var capId = null;
 
-    dbStmt.executeQuery();
-    results = dbStmt.getResultSet()
-    while (results.next()) {
-        var thisCap = new capsAndTracking();
-        //aa.print(results.getString("ATTRIBUTE_VALUE"))
-        //aa.print(results.getString("COLUMN_NAME"))
-        //aa.print(results.getString("B1_PER_ID1"))
-        //aa.print(results.getString("B1_PER_ID2"))
-        //aa.print(results.getString("B1_PER_ID3"))
-        thisCap.B1_PER_ID1 = results.getString("B1_PER_ID1");
-        thisCap.B1_PER_ID2 = results.getString("B1_PER_ID2");
-        thisCap.B1_PER_ID3 = results.getString("B1_PER_ID3");
-        thisCap.TrackingID = results.getString("tracking");
-        thisCap.FileName = results.getString("signature");
-        capArray.push(thisCap)
+//Start process
+getCapsFromDB()
+aa.print("Number of records to process: " + capArray.length)
+mainProcess()
+
+
+function mainProcess() {
+
+    if (capArray.length == 0) {
+        logDebug("No records to process. Exiting")
+        return;
     }
-    dbStmt.close();
-}
-catch (err) {
-    logDebug(err.message);
-    if (typeof dbStmt != "undefined") dbStmt.close();
-}
-finally {
-
-    conn.close()
-}
-
-aa.print(capArray.length)
-
-var trackingIDsForWebService = "";
-for (x in capArray) {
-    aa.print(capArray[x].B1_PER_ID1 + "-" + capArray[x].B1_PER_ID2 + "-" + capArray[x].B1_PER_ID3 + " " + capArray[x].TrackingID + " " + capArray[x].FileName)
-    if (x < capArray.length - 1) {
-        trackingIDsForWebService += capArray[x].TrackingID + ',';
+    var trackingIDsForWebService = "";
+    for (x in capArray) {
+        aa.print(capArray[x].B1_PER_ID1 + "-" + capArray[x].B1_PER_ID2 + "-" + capArray[x].B1_PER_ID3 + " " + capArray[x].TrackingID + " " + capArray[x].FileName)
+        if (x < capArray.length - 1) {
+            trackingIDsForWebService += capArray[x].TrackingID + ',';
+        }
+        else {
+            trackingIDsForWebService += capArray[x].TrackingID
+        }
     }
-    else {
-        trackingIDsForWebService += capArray[x].TrackingID
-    }
-}
-aa.print(trackingIDsForWebService)
+    aa.print(trackingIDsForWebService)
 
-//GetFileNamesTrackingID
-//GetConfirmationDocument
-var today = new Date();
-//formatDate - MMDDYY
-//aa.print(aa.util.formatDate(today, "MMDDYY"))
-var dateString = aa.util.formatDate(today, "MMDDYY")
-//or use specifc date
-dateString = "011121"
-var fileName = "toc" + dateString + ".pdf"
-var webServiceReturn = callPDFService(GetFileNamesTrackingID, fileName, trackingIDsForWebService)
+    //GetFileNamesTrackingID
+    //GetConfirmationDocument
+   
+    var fileName = "toc" + dateStringForFileName + ".pdf"
+    var webServiceReturn = callPDFService("GetFileNamesTrackingID", fileName, trackingIDsForWebService)
+   
+    //var webServiceReturn = '{"9171999991703876895656":"pod0104210001","9171999991703876895663":"pod0111210001","9171999991703876895700":"pod0111210001","9171999991703876895793":"pod0111210001"}'
+    //var webServiceReturn = '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">{"9171999991703876895656":"pod0104210001","9171999991703876895663":"pod0111210001","9171999991703876895700":"pod0111210001","9171999991703876895793":"pod0111210001"}</string>'
 
-var webServiceReturn = '{"9171999991703876895656":"pod0104210001","9171999991703876895663":"pod0111210001","9171999991703876895700":"pod0111210001","9171999991703876895793":"pod0111210001"}'
-//var webServiceReturn = '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">{"9171999991703876895656":"pod0104210001","9171999991703876895663":"pod0111210001","9171999991703876895700":"pod0111210001","9171999991703876895793":"pod0111210001"}</string>'
-
-var returnObj = JSON.parse(webServiceReturn)
-for (x in returnObj) aa.print(x + ":" + returnObj[x])
-logDebug(Object.keys(returnObj).length)
-//logDebug(returnObj["9171999991703876895656"])
-for (z in capArray) {
-    logDebug(capArray[z].TrackingID)
-    capArray[z].FileName = returnObj[capArray[z].TrackingID]
-    logDebug(capArray[z].FileName)
-}
-
-//Did we get all of the filenames that we wanted?
-if (Object.keys(returnObj).length != capArray.length) {
-    //Possible missing items from the year before
-    //Cal web service again with last file dated last Monday of the year before
-    dateString = "122820"
-    var fileName = "toc" + dateString + ".pdf"
-    var webServiceReturn = callPDFService(GetFileNamesTrackingID, fileName, trackingIDsForWebService)
+    //need to parse the string twice to get it into JSON object because the return is ecapsulated in quotes and escapes
+    //EG result "{\"9171999991703876895656\":\"pod0104210001\",\"9171999991703876895663\":\"pod0111210001\"}"
     var returnObj = JSON.parse(webServiceReturn)
-    for (x in returnObj) aa.print(x + ":" + returnObj[x])
-    logDebug(Object.keys(returnObj).length)
+    aa.print("returnObj " + returnObj)
+    //return
+    var finalObj = JSON.parse(returnObj)
+    if (finalObj.length == 0) {
+        logDebug("No file returned from USPS")
+        return;
+    }
+    logDebug("returnObj " + finalObj)
+    for (x in finalObj) aa.print(x + ":" + finalObj[x])
+    
+    logDebug(Object.keys(finalObj).length)
+    //return
     //logDebug(returnObj["9171999991703876895656"])
     for (z in capArray) {
         logDebug(capArray[z].TrackingID)
-        capArray[z].FileName = returnObj[capArray[z].TrackingID]
+        capArray[z].FileName = finalObj[capArray[z].TrackingID]
         logDebug(capArray[z].FileName)
+    }
+
+    ////Did we get all of the filenames that we wanted?
+    if (Object.keys(finalObj).length != capArray.length) {
+        //Possible missing items from the year before
+        //Cal web service again with last file dated last Monday of the year before
+        logDebug("missed some files. checking from last year")
+        dateString = "122820"
+        var lastMondayOfYear = getLastMondayOfYear(today.getFullYear() - 1)
+        var dateString = (lastMondayOfYear.getMonth() + 1).toString() + lastMondayOfYear.getDate().toString() + lastMondayOfYear.getFullYear().toString().substring(0, 2);
+        aa.print("lastMondayOfYear" + dateString)
+        var fileName = "toc" + dateString + ".pdf"
+        var webServiceReturn = callPDFService("GetFileNamesTrackingID", fileName, trackingIDsForWebService)
+        var returnObj = JSON.parse(webServiceReturn)
+        var finalObj = JSON.parse(returnObj)
+        for (x in finalObj) aa.print(x + ":" + finalObj[x])
+        logDebug(Object.keys(finalObj).length)
+        //logDebug(returnObj["9171999991703876895656"])
+        for (z in capArray) {
+            if (capArray[z].FileName === undefined || capArray[z].FileName === "undefined") {
+
+                capArray[z].FileName = finalObj[capArray[z].TrackingID]     
+            }
+            logDebug(capArray[z].TrackingID)
+            logDebug(capArray[z].FileName)
+        }
+    }
+
+    //At this point we have the capArray all set to get documents and attach to record
+    for (x in capArray) {
+        aa.print(capArray[x].B1_PER_ID1 + "-" + capArray[x].B1_PER_ID2 + "-" + capArray[x].B1_PER_ID3);
+        //continue
+        var capId = aa.cap.getCapID(capArray[x].B1_PER_ID1, capArray[x].B1_PER_ID2, capArray[x].B1_PER_ID3).getOutput();
+        //REC21-00000-00011 = DEM-21-00001
+        
+        if (capArray[x].FileName === undefined || capArray[x].FileName === "undefined") {
+
+            logDebug("no file to upoad")
+            continue;
+        }
+        aa.print("get document for AltID: " + capId.getCustomID() + " Filename: " + capArray[x].FileName)
+        var docBytes = callPDFService("GetConfirmationDocument", capArray[x].FileName + ".pdf", capArray[x].TrackingID)
+        //var returnBytes = JSON.parse(docBytes)
+        if (docBytes.length == 0) {
+            logDebug("No file returned from USPS")
+            continue;
+        }
+        logDebug(docBytes)
+        //Upload to record
+        uploadDocumentToRecord(capId, capArray[x].FileName, capArray[x].TrackingID, docBytes)
+        //get document
+        var documentID = null;
+        var documentKey = null;
+        var documentList = aa.document.getCapDocumentList(capId, currentUserID).getOutput()
+        for (y in documentList) {
+            logDebug("documentList[y].getFileName() " + documentList[y].getFileName())
+            if (documentList[y].getFileName() == capArray[x].TrackingID + ".pdf") {
+
+                documentID = documentList[y].getDocumentNo();
+                documentKey = documentList[y].getFileKey();
+                break;
+            }
+        }
+        if (!documentID) {
+
+            logDebug("Could not find document in Accela. Doc Name: " + capArray[x].TrackingID + ".pdf")
+            continue;
+        }
+
+        //build URL string
+        var currentEnvURL = lookup("WINSALEM_SETTINGS_USPS", "CURRENT_ENV_URL");
+
+        var uploadURL = currentEnvURL + "/portlets/document/adobeDoc.do?mode=download&documentID=" + documentID + "&fileKey=" + documentKey + "&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=" + capArray[x].B1_PER_ID1 + "-" + capArray[x].B1_PER_ID2 + "-" + capArray[x].B1_PER_ID3 + "&altID=" + capId.getCustomID() + "&entityType=CAP&module=Enforcement&fileName=" + capArray[x].TrackingID + ".pdf";
+        //itemCapModel.getModuleName();
+        //https://winsalem-supp-av.accela.com/portlets/document/adobeDoc.do?mode=download            & documentID=24744232            & fileKey=A01000000292492I6RF9YUDVYVBXE3            & source=ADS            & edmsType=ADS            & haveDownloadRight=yes            & refFrom=document            & entityID=REC21-00000-00011            & altID=DEM-21-00001            & entityType=CAP            & module=Enforcement            & fileName=9171999991703876895663.pdf
+        //Add link to table
+        var USPSTable = loadASITable("USPS TRACKING", capId);
+
+    	for (var x in USPSTable) {
+
+            USPSTable[x]["Signature Document"] = uploadURL;
+    	}
+    	removeASITable("USPS TRACKING", capId);
+    	addASITable("USPS TRACKING", USPSTable, capId);
+    }
+}
+function strToUtf16Bytes(str) {
+    const bytes = [];
+    for (ii = 0; ii < str.length; ii++) {
+        const code = str.charCodeAt(ii); // x00-xFFFF
+        bytes.push(code & 255, code >> 8); // low, high
+    }
+    return bytes;
+}
+
+function uploadDocumentToRecord(capId, docName, trackingID, bytes) {
+
+    var path = "c:\\temp\\" + docName + ".pdf";
+
+    try {
+        fout = aa.io.FileOutputStream(path);
+        //Temp fix
+        var converted = strToUtf16Bytes(bytes)
+        fout.write(converted);
+        //fout.write(bytes.bytes);
+        fout.flush();
+        fout.close();
+        logDebug("saved to Disc")
+    }
+    catch (ex) {
+        logDebug("error saving doc to disc: " + ex.message)
+        return;
+    }
+
+    var documentObject = aa.document.newDocumentModel().getOutput()
+    var tmpEntId = capId.getID1() + "-" + capId.getID2() + "-" + capId.getID3();
+    aa.print(tmpEntId)
+    documentObject.setDocumentNo(null);
+    documentObject.setCapID(capId)
+    documentObject.setEntityID(tmpEntId);
+    documentObject.setDocName(trackingID + ".pdf") //toc120720_test.pdf
+    documentObject.setFileName(trackingID + ".pdf");
+    documentObject.setSource("ADS")
+    documentObject.setSourceName("ADS")
+    documentObject.setDocCategory("Supporting Document")
+    documentObject.setDocGroup("ENF_GENERAL")
+    documentObject.setDocType("application/pdf")
+    documentObject.setServiceProviderCode("WINSALEM")
+    documentObject.setSocComment("Accela Document Service")
+    documentObject.setRecStatus("A")
+    documentObject.setDocDepartment("WINSALEM/ADMIN/NA/NA/NA/NA/NA")
+
+    // Open and process file
+    try {
+
+        // put together the document content - use java.io.FileInputStream
+        var newContentModel = aa.document.newDocumentContentModel().getOutput();
+        inputstream = aa.io.FileInputStream(path);
+        //for (x in inputstream) aa.print(x)
+        newContentModel.setDocInputStream(inputstream);
+        documentObject.setDocumentContent(newContentModel);
+        var newDocResult = aa.document.createDocument(documentObject);
+        if (newDocResult.getSuccess()) {
+            newDocResult.getOutput();
+            logDebug("Successfully copied document: " + documentObject.getFileName());
+            //logDebug("output: " + newDocResult.toString())
+            //for (x in newDocResult) aa.print(x)
+        }
+        else {
+            logDebug("Failed to copy document: " + documentObject.getFileName());
+            logDebug(newDocResult.getErrorMessage());
+        }
+    }
+    catch (err) {
+        logDebug("Error copying document: " + err.message);
+        return false;
+    }
+    finally {
+        logDebug("Delete the document");
+        aa.util.deleteFile(path);
     }
 }
 
-//At this point we have the capArray all set to get documents and attach to record
-for (x in capArray) {
-//    aa.print(capArray[x].B1_PER_ID1);
-	var capId = aa.cap.getCapID(capArray[x].B1_PER_ID1, capArray[x].B1_PER_ID2, capArray[x].B1_PER_ID3).getOutput();
-    var USPSTable = loadASITable("USPS TRACKING", capId);
-    var docBytes = callPDFService(GetConfirmationDocument, capArray[x].fileName + ".pdf", capArray[x].TrackingID)
-    //Upload to record
-    //Add link to table
+function lookup(stdChoice, stdValue) {
+    var strControl;
+    var bizDomScriptResult = aa.bizDomain.getBizDomainByValue(stdChoice, stdValue);
 
-//	for (var x in USPSTable) {
-
-//		USPSTable[x]["Signature Document"] = "https://winsalem-supp-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24744178&fileKey=A01000000283191E5C3H4W0YE2WE62&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003LT&altID=DEM-20-00004&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7701+6760.pdf";
-//	}
-//	removeASITable("USPS TRACKING", capId);
-//	addASITable("USPS TRACKING", USPSTable, capId);
-
-//}
-//var capId = aa.cap.getCapID("VEH-21-00001").getOutput();
-//var USPSTable = loadASITable("USPS TRACKING", capId);
-
-//for (var x in USPSTable) {
-
-//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820828&fileKey=A01000000232541WM8J9RJNCNZKJM4&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC21-00000-00023&altID=VEH-21-00001&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5663.pdf";
-//}
-//removeASITable("USPS TRACKING", capId);
-//addASITable("USPS TRACKING", USPSTable, capId);
-
-//var capId = aa.cap.getCapID("VST-20-00015").getOutput();
-//var USPSTable = loadASITable("USPS TRACKING", capId);
-
-//for (var x in USPSTable) {
-
-//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820849&fileKey=A01000000232542OZEH9YJBPPJXKXS&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003IG&altID=VST-20-00015&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5700.pdf";
-//}
-//removeASITable("USPS TRACKING", capId);
-//addASITable("USPS TRACKING", USPSTable, capId);
-
-//var capId = aa.cap.getCapID("GRF-20-00029").getOutput();
-//var USPSTable = loadASITable("USPS TRACKING", capId);
-
-//for (var x in USPSTable) {
-
-//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820850&fileKey=A01000000232530MEQGHP2CHFLO4QD&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=REC20-00000-003ES&altID=GRF-20-00029&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5793.pdf";
-//}
-//removeASITable("USPS TRACKING", capId);
-//addASITable("USPS TRACKING", USPSTable, capId);
-
-//var capId = aa.cap.getCapID("2020120296").getOutput();
-//var USPSTable = loadASITable("USPS TRACKING", capId);
-
-//for (var x in USPSTable) {
-
-//	USPSTable[x]["Signature Document"] = "https://winsalem-test-av.accela.com/portlets/document/adobeDoc.do?mode=download&documentID=24820851&fileKey=A01000000232545OSGNLKNIJVSTODH&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=20HWS-00000-0001N&altID=2020120296&entityType=CAP&module=Enforcement&fileName=7199+9991+7038+7689+5847.pdf";
-//}
-//removeASITable("USPS TRACKING", capId);
-//addASITable("USPS TRACKING", USPSTable, capId);
+    if (bizDomScriptResult.getSuccess()) {
+        var bizDomScriptObj = bizDomScriptResult.getOutput();
+        strControl = "" + bizDomScriptObj.getDescription(); // had to do this or it bombs.  who knows why?
+    }
+    return strControl;
 }
-
 //GetFileNamesTrackingID
 //GetConfirmationDocument
 function callPDFService(serviceName, fileName, trackingIDsForWebService) {
 
     try {
-        var apiURL = "http://192.168.1.69/api/PDFRetrieve/"; //use lookup("ProjectDox_Configuration", "CreateProjectURL")66443410
-        apiURL = apiURL + serviceName + "/" + fileName + "/" + trackingIDsForWebService; 
+        //var apiURL = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetFileNamesTrackingID/toc011121.pdf/9171999991703876895663,9171999991703876895700,9171999991703876895793,9171999991703876895656"; //use lookup("ProjectDox_Configuration", "CreateProjectURL")66443410http://192.168.1.69/api/PDFRetrieve/
+        //var apiURL = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetFileNamesTrackingID/toc011121.pdf/9171999991703934968445,9171999991703877016760,9171999991703876895656,9171999991703876895663";
+        //var apiURL = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetFileNamesTrackingID/toc011121.pdf/9171999991703934968445,9171999991703877016760,9171999991703876895656,9171999991703876895663";
+        //var apiURL = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/"; 
+        var apiURL = lookup("WINSALEM_SETTINGS_USPS", "PDF_SERVICE_URL");
+        apiURL = apiURL + serviceName + "/" + fileName + "/" + trackingIDsForWebService;
         var headers = aa.util.newHashMap();
         headers.put("Content-Type", "application/json");
         //headers.put("Authorization", "Basic Y293c2NiZDpDaXR5b2ZXaW5zdG9uIzE =")
-        logDebug("Calling to create project")
+        logDebug("Calling to create project with URL: " + apiURL)
         var result = aa.httpClient.get(apiURL, headers);
-
+        logDebug("result " + result.getSuccess())
         if (result.getSuccess()) {
             result = result.getOutput();
+            logDebug("result " + result)
             return result;
         } else {
             //aa.sendMail(lookup("ProjectDox_Configuration", "ErrorFromEmail"), lookup("ProjectDox_Configuration", "ErrorRecipientEmail"), "", "Error in ProjectDox", "Error creating project in ProjectDox: " + result.getErrorMessage() + ". Cannot create project for record: " + capIDString)
@@ -194,6 +298,56 @@ function callPDFService(serviceName, fileName, trackingIDsForWebService) {
     catch (ex) {
         logDebug(ex.message)
     }
+}
+
+function getCapsFromDB() {
+    var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
+    var ds = initialContext.lookup("java:/WINSALEM");
+    var conn = ds.getConnection();
+    //Unable to get managed connection for java:/AA
+    //conn.close()
+    var servProvCode = aa.getServiceProviderCode();
+    try {
+        //var SQL = "Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Signature Document' And SERV_PROV_CODE = 'WINSALEM'"
+        //var SQL = "Select * From BAPPSPECTABLE_VALUE sg Where sg.COLUMN_NAME = 'Signature Document' And (sg.TTRIBUTE_VALUE Is Null Or sg.ATTRIBUTE_VALUE = '') And SERV_PROV_CODE = 'WINSALEM'"
+        var SQL = "Select sg.B1_PER_ID1 as B1_PER_ID1, sg.B1_PER_ID2 as B1_PER_ID2, sg.B1_PER_ID3 as B1_PER_ID3,sg.ATTRIBUTE_VALUE as signature, tn.ATTRIBUTE_VALUE as tracking, sg.B1_PER_ID3 From BAPPSPECTABLE_VALUE sg Inner Join (Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE Is Not Null And SERV_PROV_CODE = 'WINSALEM')tn On sg.B1_PER_ID3 = tn.B1_PER_ID3 Where sg.COLUMN_NAME = 'Signature Document' And (sg.ATTRIBUTE_VALUE Is Null Or sg.ATTRIBUTE_VALUE = '') And sg.ROW_INDEX = tn.ROW_INDEX And sg.SERV_PROV_CODE = 'WINSALEM'"
+        //var SQL = "Select * From BAPPSPECTABLE_VALUE tn Where COLUMN_NAME = 'Tracking Number' And ATTRIBUTE_VALUE Is Not Null And SERV_PROV_CODE = 'WINSALEM'"
+        var dbStmt = conn.prepareStatement(SQL);
+
+        dbStmt.executeQuery();
+        results = dbStmt.getResultSet()
+        while (results.next()) {
+            var thisCap = new capsAndTracking();
+            //aa.print(results.getString("ATTRIBUTE_VALUE"))
+            //aa.print(results.getString("COLUMN_NAME"))
+            //aa.print(results.getString("B1_PER_ID1"))
+            //aa.print(results.getString("B1_PER_ID2"))
+            //aa.print(results.getString("B1_PER_ID3"))
+            thisCap.B1_PER_ID1 = results.getString("B1_PER_ID1");
+            thisCap.B1_PER_ID2 = results.getString("B1_PER_ID2");
+            thisCap.B1_PER_ID3 = results.getString("B1_PER_ID3");
+            thisCap.TrackingID = results.getString("tracking");
+            thisCap.FileName = results.getString("signature");
+            capArray.push(thisCap)
+        }
+        dbStmt.close();
+    }
+    catch (err) {
+        logDebug(err.message);
+        if (typeof dbStmt != "undefined") dbStmt.close();
+    }
+    finally {
+
+        conn.close()
+    }
+}
+
+function getLastMondayOfYear(year) {
+    var lastDayOfYear = new Date(year, "11", "31")
+    var currentWeekDay = lastDayOfYear.getDay();
+    var monday = lastDayOfYear.getDate() - (currentWeekDay - 1);
+    var mondayDate = new Date(year, "11", monday)
+    return mondayDate;
 }
 
 function logDebug(z) {
@@ -221,7 +375,7 @@ function logDebug(z) {
 //<string>9171999991703934986609</string>\
 //</ArrayOfstring >'
 ////aa.print(trackingFromService.toString())
-var currentUserID = "ADMIN"
+
 //var capArray = new Array();
 
 

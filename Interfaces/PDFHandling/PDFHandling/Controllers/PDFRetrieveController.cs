@@ -52,7 +52,7 @@ namespace PDFHandling.Controllers
             }
             Utilites.getUSPSDocument(fileName);
             String[] trackingIDsArray = trackingID.Split(',');
-            Dictionary<String, String> returnList = Utilites.GetFileNames(trackingIDsArray);
+            Dictionary<String, String> returnList = Utilites.GetFileNames(fileName, trackingIDsArray);
             String jsonObj = JsonConvert.SerializeObject(returnList);
             return jsonObj;
 
@@ -61,7 +61,7 @@ namespace PDFHandling.Controllers
             // https://localhost:44359/api/PDFRetrieve/GetFileNamesTrackingID/toc011121.pdf/9171999991703876895663,9171999991703876895700,9171999991703876895793,9171999991703876895656
         }
 
-        public byte[] GetConfirmationDocument(String fileName, String trackingID)
+        public HttpResponseMessage GetConfirmationDocument(String fileName, String trackingID)
         {
             log.Debug("In Controller gettting document");
             try
@@ -75,7 +75,20 @@ namespace PDFHandling.Controllers
             }
             
             Utilites.getUSPSDocument(fileName);
-            return Utilites.SplitPages(fileName, trackingID);
+            var dataBytes = Utilites.SplitPages(fileName, trackingID);
+            //converting Pdf file into bytes array  
+            //var dataBytes = File.ReadAllBytes(reqBook);
+            //adding bytes to memory stream   
+            var dataStream = new MemoryStream(dataBytes);
+
+            HttpResponseMessage httpResponseMessage = Request.CreateResponse(HttpStatusCode.OK);
+            httpResponseMessage.Content = new StreamContent(dataStream);
+            httpResponseMessage.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+            //httpResponseMessage.Content.Headers.ContentDisposition.FileName = bookName;
+            httpResponseMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+ 
+            return httpResponseMessage;
+
 
             //pod1130200001.pdf/9171999991703877016760
             //https://192.168.1.75/PDFService/api/PDFRetrieve/GetConfirmationDocument/pod1130200001.pdf/9171999991703877016760
