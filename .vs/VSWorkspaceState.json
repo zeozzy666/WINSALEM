@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\INCLUDES_CUSTOM",
+    "\\Scripts",
+    "\\Scripts\\Batch",
+    "\\Scripts\\Event",
+    "\\Scripts\\Integrations",
+    "\\Scripts\\Misc"
+  ],
+  "SelectedNode": "\\Scripts\\Batch\\BATCH_GET_DOC_FROM_TRACKING_IDS.js",
+  "PreviewInSolutionExplorer": false
+}

@@ -1,0 +1,93 @@
+05:36:54,709 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+05:36:55,262 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+05:37:12,354 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+06:23:27,194 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+06:23:28,219 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+06:23:33,306 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+06:23:34,792 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:Misused header name. Make sure request headers are used with HttpRequestMessage, response headers with HttpResponseMessage, and content headers with HttpContent objects.
+06:25:26,669 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+06:25:27,195 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+06:25:29,542 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+06:25:30,835 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:Misused header name. Make sure request headers are used with HttpRequestMessage, response headers with HttpResponseMessage, and content headers with HttpContent objects.
+06:26:24,777 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+06:26:25,702 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+06:26:28,099 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+06:26:29,343 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:Misused header name. Make sure request headers are used with HttpRequestMessage, response headers with HttpResponseMessage, and content headers with HttpContent objects.
+06:27:36,965 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+06:27:37,530 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+06:27:41,820 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+06:29:14,948 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+06:29:15,478 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+06:29:18,080 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+06:29:19,426 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Application threw an error returning document:Misused header name. Make sure request headers are used with HttpRequestMessage, response headers with HttpResponseMessage, and content headers with HttpContent objects.
+07:38:45,862 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+07:38:46,378 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+07:38:51,135 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+07:40:04,309 [8] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+07:40:04,360 [8] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+07:40:06,913 [8] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+07:43:16,939 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+07:43:17,376 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+07:43:22,119 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+07:48:33,931 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+07:48:34,377 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+07:48:39,275 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:01:20,249 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:01:20,725 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:01:23,433 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:01:44,463 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:01:44,526 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:02:06,758 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:05:45,931 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:05:46,367 [6] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS
+08:05:49,119 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:13:04,673 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:13:05,094 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:15:21,175 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:15:21,564 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:17:49,223 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:17:49,634 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:22:10,751 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:22:11,259 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:22:41,923 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:22:50,048 [8] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:22:50,119 [8] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:22:56,946 [8] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:24:35,232 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:24:35,646 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:24:39,076 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:31:02,096 [8] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:31:02,515 [8] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:31:05,757 [8] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:31:31,082 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:31:31,130 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:31:33,929 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:31:48,827 [11] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:31:48,830 [11] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:31:51,104 [11] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:38:41,056 [9] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:38:41,461 [9] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:38:44,366 [9] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:41:55,041 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:41:55,451 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:42:22,711 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:46:09,510 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:46:09,929 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:46:12,934 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:48:53,874 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:48:54,275 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:48:58,998 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+08:49:47,930 [6] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+08:49:48,349 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+08:49:52,346 [6] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+09:00:14,990 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+09:00:15,441 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+09:00:18,789 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+09:18:30,948 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+09:18:31,396 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+09:18:34,647 [5] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+09:21:11,678 [7] [PDFHandling.Controllers.PDFRetrieveController] [GetConfirmationDocument] DEBUG - In Controller gettting document
+09:21:12,129 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - Gettting document from file system
+09:21:15,701 [7] [PDFHandling.Utilities.Utilites] [SplitPages] DEBUG - {}
+16:04:20,021 [5] [PDFHandling.Controllers.PDFRetrieveController] [GetTrackingIDs] DEBUG - In Controller gettting list of tracking numbers
+16:04:20,536 [5] [PDFHandling.Utilities.Utilites] [getUSPSDocument] DEBUG - Getting Document from USPS

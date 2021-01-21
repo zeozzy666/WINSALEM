@@ -31,7 +31,7 @@ namespace PDFHandling.Utilities
                 {
                     log.Debug("Getting Document from USPS");
                     String listURL = baseURL + "extracts?fullList=true&filename=" + fileName;
-                    // String listURL = "https://pdx.usps.com/api/extracts?fullList=true&filename=toc113020.pdf"; 
+                    // String listURL = "https://pdx.usps.com/api/extracts?fullList=true&filename=toc010421.pdf"; // 68034209
 
                     httpClient.DefaultRequestHeaders.Add("Authorization", ConfigurationManager.AppSettings["USPSBasicAuth"]);
                     string responseList = httpClient.GetStringAsync(new Uri(listURL)).Result;
@@ -147,7 +147,9 @@ namespace PDFHandling.Utilities
                 return null;
             }
         }
-        public static byte[] SplitPages(String fileName, String trackingID)
+
+        //public String fileNameToReturn = "";
+        public static HttpResponseMessage SplitPages(String fileName, String trackingID, HttpRequestMessage request, HttpResponse response)
         {
             String trackimgIDToSearch = trackingID.Substring(2);
             trackimgIDToSearch = trackimgIDToSearch.Substring(0, 4) + " " + trackimgIDToSearch.Substring(4, 4) + " " + trackimgIDToSearch.Substring(8, 4) + " " + trackimgIDToSearch.Substring(12, 4) + " " + trackimgIDToSearch.Substring(16, 4);
@@ -200,18 +202,51 @@ namespace PDFHandling.Utilities
             }
             try
             {
-                return File.ReadAllBytes(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf");
-                //using (FileStream SourceStream = File.Open(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf", FileMode.OpenOrCreate))
-                //{
-                //    //return SourceStream;
-                //    using (var memoryStream = new MemoryStream())
-                //    {
-                //        SourceStream.CopyTo(memoryStream);
-                //        //return memoryStream;
-                //        return memoryStream.ToArray();
-                //    }
+                
 
+                
+                HttpResponseMessage httpResponseMessage = request.CreateResponse(HttpStatusCode.OK);
+                //httpResponseMessage.Content = new StreamContent(dataStream);
+                var dataBytes = File.ReadAllBytes(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf");
+                //var dataStream = new MemoryStream();
+                var dataStream = new MemoryStream(dataBytes);
+               // var gZipStream = new System.IO.Compression.GZipStream(dataStream, System.IO.Compression.CompressionMode.Compress);
+                //httpResponseMessage.Content = new StreamContent(gZipStream);
+                //using (var outputStream = new MemoryStream())
+                ////{
+                //using (var gZipStream = new System.IO.Compression.GZipStream(dataStream, System.IO.Compression.CompressionMode.Compress))
+                //{
+                //    gZipStream.Write(dataBytes, 0, dataBytes.Length);
+
+                    
                 //}
+                httpResponseMessage.Content = new StreamContent(dataStream);
+                //}
+
+                //httpResponseMessage.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("inline");
+                httpResponseMessage.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+                httpResponseMessage.Content.Headers.ContentDisposition.FileName = trackimgIDToSearch + ".pdf";
+                httpResponseMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+                //log.Debug(httpResponseMessage.Content.Headers.ContentEncoding);
+                //response.Filter = new System.IO.Compression.GZipStream(response.Filter,
+                //                        System.IO.Compression.CompressionMode.Compress);
+                //response.Headers.Remove("Content-Encoding");
+                //response.AppendHeader("Content-Encoding", "gzip");
+                //response.AppendHeader("Vary", "Content-Encoding");
+                //response.AppendHeader("Transfer-Encoding", "chunked");
+                //response.Headers.Remove("Content-Type");
+                //response.AppendHeader("Content-Type", "application/octet-stream");
+                //response.
+                //response.WriteFile(HttpContext.Current.Server.MapPath("/Documents") + "/" + trackimgIDToSearch + ".pdf");
+                //httpResponseMessage.
+                //httpResponseMessage..
+                httpResponseMessage.Headers.Add("Vary", "Accept-Encoding");
+                httpResponseMessage.Headers.Add("Keep-Alive", " timeout=15, max=99");
+                httpResponseMessage.Headers.Add("Connection", "Keep-Alive");
+                httpResponseMessage.Headers.Add("Transfer-Encoding", "chunked");
+                httpResponseMessage.Content.Headers.Add("Content-Encoding", "gzip");
+                httpResponseMessage.Content.Headers.Add("Content-Language", "en-US");
+                return httpResponseMessage;
             }
             catch (Exception ex)
             {
