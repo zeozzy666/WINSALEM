@@ -14,8 +14,8 @@
  */
 
 //Test Data
-//aa.env.setValue("tocFileDateToRun", "01/11/2021")
-//aa.env.setValue("useParamDate", "true")
+aa.env.setValue("tocFileDateToRun", "01/18/2021")
+aa.env.setValue("useParamDate", "true")
 
 //Get params from batch job
 var tocFileToRun = aa.env.getValue("tocFileDateToRun")
@@ -366,7 +366,7 @@ function getCapsFromDB() {
             thisCap.B1_PER_ID1 = results.getString("B1_PER_ID1");
             thisCap.B1_PER_ID2 = results.getString("B1_PER_ID2");
             thisCap.B1_PER_ID3 = results.getString("B1_PER_ID3");
-            thisCap.TrackingID = results.getString("tracking");
+            thisCap.TrackingID = results.getString("tracking").trim();
             thisCap.FileName = results.getString("signature");
             capArray.push(thisCap)
         }
