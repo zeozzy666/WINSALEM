@@ -9,13 +9,13 @@
  *				find the last Monday of the previous year and call GetFileNamesTrackingID with that monday
  *			Concatenate the lists
  *			Update the record list with correct filenames
- * Go through each record and get pod file if populated.
+ * Go through each record and get pod file, upload the file to the record and add a link to ASIT .
  * 
  */
 
 //Test Data
-aa.env.setValue("tocFileDateToRun", "01/11/2021")
-aa.env.setValue("useParamDate", "true")
+//aa.env.setValue("tocFileDateToRun", "01/11/2021")
+//aa.env.setValue("useParamDate", "true")
 
 //Get params from batch job
 var tocFileToRun = aa.env.getValue("tocFileDateToRun")
@@ -65,21 +65,15 @@ function mainProcess() {
         }
     }
     aa.print(trackingIDsForWebService)
-
-    //GetFileNamesTrackingID
-    //GetConfirmationDocument
    
     var fileName = "toc" + dateStringForFileName + ".pdf"
     var webServiceReturn = callPDFService("GetFileNamesTrackingID", fileName, trackingIDsForWebService)
    
-    //var webServiceReturn = '{"9171999991703876895656":"pod0104210001","9171999991703876895663":"pod0111210001","9171999991703876895700":"pod0111210001","9171999991703876895793":"pod0111210001"}'
-    //var webServiceReturn = '<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/">{"9171999991703876895656":"pod0104210001","9171999991703876895663":"pod0111210001","9171999991703876895700":"pod0111210001","9171999991703876895793":"pod0111210001"}</string>'
-
     //need to parse the string twice to get it into JSON object because the return is ecapsulated in quotes and escapes
     //EG result "{\"9171999991703876895656\":\"pod0104210001\",\"9171999991703876895663\":\"pod0111210001\"}"
     var returnObj = JSON.parse(webServiceReturn)
     aa.print("returnObj " + returnObj)
-    //return
+    
     var finalObj = JSON.parse(returnObj)
     if (finalObj.length == 0) {
         logDebug("No file returned from USPS")
@@ -89,8 +83,7 @@ function mainProcess() {
     for (x in finalObj) aa.print(x + ":" + finalObj[x])
     
     logDebug(Object.keys(finalObj).length)
-    //return
-    //logDebug(returnObj["9171999991703876895656"])
+    
     for (z in capArray) {
         logDebug(capArray[z].TrackingID)
         capArray[z].FileName = finalObj[capArray[z].TrackingID]
@@ -100,7 +93,7 @@ function mainProcess() {
     ////Did we get all of the filenames that we wanted?
     if (Object.keys(finalObj).length != capArray.length) {
         //Possible missing items from the year before
-        //Cal web service again with last file dated last Monday of the year before
+        //Call web service again with last file dated last Monday of the year before
         logDebug("missed some files. checking from last year")
         dateString = "122820"
         var lastMondayOfYear = getLastMondayOfYear(today.getFullYear() - 1)
@@ -112,7 +105,7 @@ function mainProcess() {
         var finalObj = JSON.parse(returnObj)
         for (x in finalObj) aa.print(x + ":" + finalObj[x])
         logDebug(Object.keys(finalObj).length)
-        //logDebug(returnObj["9171999991703876895656"])
+        
         for (z in capArray) {
             if (capArray[z].FileName === undefined || capArray[z].FileName === "undefined") {
 
@@ -136,7 +129,7 @@ function mainProcess() {
             continue;
         }
         aa.print("get document for AltID: " + capId.getCustomID() + " Filename: " + capArray[x].FileName)
-        //var docBytes = callPDFService("GetConfirmationDocument", capArray[x].FileName + ".pdf", capArray[x].TrackingID)
+        //Use HttpClient here because return from callPDFService is somehow corrupted with the bytes returned
         var docBytes = callHttpClient("GetConfirmationDocument", capArray[x].FileName + ".pdf", capArray[x].TrackingID);
         
         if (!docBytes) {
@@ -148,8 +141,7 @@ function mainProcess() {
         }
         
         uploadDocumentToRecord(capId, capArray[x].FileName, capArray[x].TrackingID, docBytes)
-        //return;
-        //get document
+       
         var documentID = null;
         var documentKey = null;
         var documentList = aa.document.getCapDocumentList(capId, currentUserID).getOutput()
@@ -172,8 +164,6 @@ function mainProcess() {
         var currentEnvURL = lookup("WINSALEM_SETTINGS_USPS", "CURRENT_ENV_URL");
 
         var uploadURL = currentEnvURL + "/portlets/document/adobeDoc.do?mode=download&documentID=" + documentID + "&fileKey=" + documentKey + "&source=ADS&edmsType=ADS&haveDownloadRight=yes&refFrom=document&entityID=" + capArray[x].B1_PER_ID1 + "-" + capArray[x].B1_PER_ID2 + "-" + capArray[x].B1_PER_ID3 + "&altID=" + capId.getCustomID() + "&entityType=CAP&module=Enforcement&fileName=" + capArray[x].TrackingID + ".pdf";
-        //itemCapModel.getModuleName();
-        //https://winsalem-supp-av.accela.com/portlets/document/adobeDoc.do?mode=download            & documentID=24744232            & fileKey=A01000000292492I6RF9YUDVYVBXE3            & source=ADS            & edmsType=ADS            & haveDownloadRight=yes            & refFrom=document            & entityID=REC21-00000-00011            & altID=DEM-21-00001            & entityType=CAP            & module=Enforcement            & fileName=9171999991703876895663.pdf
         //Add link to table
         var USPSTable = loadASITable("USPS TRACKING", capId);
 
@@ -185,7 +175,7 @@ function mainProcess() {
     	addASITable("USPS TRACKING", USPSTable, capId);
     }
     //Delete all of the files on the service
-    deleteFilesPDFService("DeleteFile", "null")
+    callPDFService("DeleteFile", "null", "1");
 }
 
 function uploadDocumentToRecord(capId, docName, trackingID, bytes) {
@@ -262,31 +252,27 @@ function lookup(stdChoice, stdValue) {
     }
     return strControl;
 }
-//GetFileNamesTrackingID
-//GetConfirmationDocument
+
 function callPDFService(serviceName, fileName, trackingIDsForWebService) {
 
     try {
         //var apiURL = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetFileNamesTrackingID/toc011121.pdf/9171999991703876895663,9171999991703876895700,9171999991703876895793,9171999991703876895656"; //use lookup("ProjectDox_Configuration", "CreateProjectURL")66443410http://192.168.1.69/api/PDFRetrieve/
-        //var apiURL = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetFileNamesTrackingID/toc011121.pdf/9171999991703934968445,9171999991703877016760,9171999991703876895656,9171999991703876895663";
-        //var apiURL = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetFileNamesTrackingID/toc011121.pdf/9171999991703934968445,9171999991703877016760,9171999991703876895656,9171999991703876895663";
-        //var apiURL = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/"; 
-        //https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetConfirmationDocument/pod0111210001.pdf/9171999991703876895663
+        
         var apiURL = lookup("WINSALEM_SETTINGS_USPS", "PDF_SERVICE_URL");
         apiURL = apiURL + serviceName + "/" + fileName + "/" + trackingIDsForWebService;
+        var authorization = lookup("WINSALEM_SETTINGS_USPS", "PDF_SERVICE_AUTHORIZATION")
         var headers = aa.util.newHashMap();
         headers.put("Content-Type", "application/json");
-        //headers.put("Authorization", "Basic Y293c2NiZDpDaXR5b2ZXaW5zdG9uIzE =")
+        headers.put("Authorization", authorization);
         logDebug("Calling DDF Service: " + apiURL)
         var result = aa.httpClient.get(apiURL, headers);
         
         logDebug("result " + result.getSuccess())
         if (result.getSuccess()) {
             result = result.getOutput();
-            //logDebug("result " + result)
+            
             return result;
         } else {
-            //aa.sendMail(lookup("ProjectDox_Configuration", "ErrorFromEmail"), lookup("ProjectDox_Configuration", "ErrorRecipientEmail"), "", "Error in ProjectDox", "Error creating project in ProjectDox: " + result.getErrorMessage() + ". Cannot create project for record: " + capIDString)
             logDebug("Error calling PDF service: " + result.getErrorMessage());
             return null;
         }
@@ -296,45 +282,47 @@ function callPDFService(serviceName, fileName, trackingIDsForWebService) {
     }
 }
 
-function deleteFilesPDFService(serviceName, fileName) {
+//function deleteFilesPDFService(serviceName, fileName) {
 
-    try {
+//    try {
         
-        var apiURL = lookup("WINSALEM_SETTINGS_USPS", "PDF_SERVICE_URL");
-        apiURL = apiURL + serviceName + "/" + fileName + "/1";
-        var headers = aa.util.newHashMap();
-        headers.put("Content-Type", "application/json");
-        //headers.put("Authorization", "Basic Y293c2NiZDpDaXR5b2ZXaW5zdG9uIzE =")
-        logDebug("Calling to create project with URL: " + apiURL)
-        var result = aa.httpClient.post(apiURL, headers);
+//        var apiURL = lookup("WINSALEM_SETTINGS_USPS", "PDF_SERVICE_URL");
+//        apiURL = apiURL + serviceName + "/" + fileName + "/1";
+//        var authorization = lookup("WINSALEM_SETTINGS_USPS", "PDF_SERVICE_AUTHORIZATION")
+//        var headers = aa.util.newHashMap();
+//        headers.put("Content-Type", "application/json");
+//        headers.put("Authorization", authorization)
+//        logDebug("Calling to create project with URL: " + apiURL)
+//        var result = aa.httpClient.post(apiURL, headers);
 
-        logDebug("result " + result.getSuccess())
-        if (result.getSuccess()) {
-            result = result.getOutput();
-            logDebug("Files on  server deleted ")
-            return result;
-        } else {
-            //aa.sendMail(lookup("ProjectDox_Configuration", "ErrorFromEmail"), lookup("ProjectDox_Configuration", "ErrorRecipientEmail"), "", "Error in ProjectDox", "Error creating project in ProjectDox: " + result.getErrorMessage() + ". Cannot create project for record: " + capIDString)
-            logDebug("Error deleting files on server: " + result.getErrorMessage());
-            return null;
-        }
-    }
-    catch (ex) {
-        logDebug(ex.message)
-    }
-}
+//        logDebug("result " + result.getSuccess())
+//        if (result.getSuccess()) {
+//            result = result.getOutput();
+//            logDebug("Files on  server deleted ")
+//            return result;
+//        } else {
+//            logDebug("Error deleting files on server: " + result.getErrorMessage());
+//            return null;
+//        }
+//    }
+//    catch (ex) {
+//        logDebug(ex.message)
+//    }
+//}
 
 function callHttpClient(serviceName, fileName, trackingIDsForWebService) {
 
     title = "JSON GET document";
     try {
-        headers = {
-            "Content-Type": "application/json"
-        };
         var apiURL = lookup("WINSALEM_SETTINGS_USPS", "PDF_SERVICE_URL");
         url = apiURL + serviceName + "/" + fileName + "/" + trackingIDsForWebService;
-       // url = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetConfirmationDocument/pod0111210001.pdf/123"; //9171999991703876895663
-        
+       // url = "https://accelauspsservicetest.cityofws.org/api/PDFRetrieve/GetConfirmationDocument/pod0111210001.pdf/9171999991703876895663";
+        var authorization = lookup("WINSALEM_SETTINGS_USPS", "PDF_SERVICE_AUTHORIZATION")
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": authorization
+        };
+       
         resp = httpClient(url, 'GET', headers);
         //displayResults(resp, title);
         var response = resp.getOutput();
@@ -357,8 +345,7 @@ function getCapsFromDB() {
     var initialContext = aa.proxyInvoker.newInstance("javax.naming.InitialContext", null).getOutput();
     var ds = initialContext.lookup("java:/WINSALEM");
     var conn = ds.getConnection();
-    //Unable to get managed connection for java:/AA
-    //conn.close()
+    
     var servProvCode = aa.getServiceProviderCode();
     try {
         //var SQL = "Select * From BAPPSPECTABLE_VALUE Where COLUMN_NAME = 'Signature Document' And SERV_PROV_CODE = 'WINSALEM'"
