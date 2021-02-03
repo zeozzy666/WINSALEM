@@ -39,10 +39,10 @@ try
         thisFeeItem.totalCost = thisRecord["GF_FEE"] ? thisRecord["GF_FEE"] : "";
         thisFeeItem.feeSeq = thisRecord["FEEITEM_SEQ_NBR"] ? thisRecord["FEEITEM_SEQ_NBR"] : "";
         thisFeeItem.caseCloseDate  = getCloseDate();
-        thisFeeItem.Area = getGISInfo("WINSALEM", "Wards", "Ward") || "";
-        thisFeeItem.Pin = getGISInfo("WINSALEM", "Parcels", "PIN") || "";
-        thisFeeItem.Block = getGISInfo("WINSALEM", "Parcels", "BLK") || "";
-        thisFeeItem.Lot = getGISInfo("WINSALEM", "Parcels", "LOT") || "";
+        thisFeeItem.Area = new String(getGISInfo("WINSALEM", "Wards", "Ward")) || "";
+        thisFeeItem.Pin = new String(getGISInfo("WINSALEM", "Parcels", "PIN")) || "";
+        thisFeeItem.Block = new String(getGISInfo("WINSALEM", "Parcels", "BLK")) || "";
+        thisFeeItem.Lot = new String(getGISInfo("WINSALEM", "Parcels", "LOT")) || "";
         thisFeeItem.location = "";
         thisFeeItem.chargeType = "";
         thisFeeItem.chargeCode = thisRecord["GF_L1"] ? thisRecord["GF_L1"] : "";
@@ -61,7 +61,8 @@ finally
 	result.message = message;
     result.invoicedFeeItemsArray = invoicedFeeItemsArray;
     //aa.env.setValue("returnCode", "1");
-    aa.env.setValue("result", result);
+    aa.env.setValue("result", JSON.stringify(result));
+    //aa.env.setValue("result", result);
 }
 
 function getRecords(fDate, tDate)
