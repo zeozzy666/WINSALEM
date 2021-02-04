@@ -20,6 +20,6 @@ else {
     }
 
 }
-aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", debug)
+//aa.sendMail("noReply@Winsalem.com", "mwells@accela.com", "", "Debug Messages", debug)
 //update GIS info
 updateGISCapInfo();
