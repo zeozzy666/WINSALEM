@@ -30,23 +30,23 @@ try
         var thisFeeItem = new Object();
         var thisFeeCode = thisRecord[""]
 
-        thisFeeItem.ownerName = "James"
-        //thisFeeItem.ownerName = thisRecord["B1_OWNER_FNAME"] + " " + thisRecord["B1_OWNER_LNAME"];
-        //thisFeeItem.ownerStreet = ""
-        //thisFeeItem.ownerCity = thisRecord["B1_CITY"] ? thisRecord["B1_CITY"] : "";
-        //thisFeeItem.ownerState = thisRecord["B1_STATE"] ? thisRecord["B1_STATE"] : "";
-        //thisFeeItem.ownerZip = thisRecord["B1_ZIP"] ? thisRecord["B1_ZIP"] : "";
-        //thisFeeItem.dateWorkPerformed = thisRecord["INVOICE_DATE"] ? thisRecord["INVOICE_DATE"] : "";
-        //thisFeeItem.totalCost = thisRecord["GF_FEE"] ? thisRecord["GF_FEE"] : "";
-        //thisFeeItem.feeSeq = thisRecord["FEEITEM_SEQ_NBR"] ? thisRecord["FEEITEM_SEQ_NBR"] : "";
-        //thisFeeItem.caseCloseDate  = getCloseDate();
+        //thisFeeItem.ownerName = "James"
+        thisFeeItem.ownerName = thisRecord["B1_OWNER_FNAME"] + " " + thisRecord["B1_OWNER_LNAME"];
+        thisFeeItem.ownerStreet = ""
+        thisFeeItem.ownerCity = thisRecord["B1_CITY"] ? thisRecord["B1_CITY"] : "";
+        thisFeeItem.ownerState = thisRecord["B1_STATE"] ? thisRecord["B1_STATE"] : "";
+        thisFeeItem.ownerZip = thisRecord["B1_ZIP"] ? thisRecord["B1_ZIP"] : "";
+        thisFeeItem.dateWorkPerformed = thisRecord["INVOICE_DATE"] ? thisRecord["INVOICE_DATE"] : "";
+        thisFeeItem.totalCost = thisRecord["GF_FEE"] ? thisRecord["GF_FEE"] : "";
+        thisFeeItem.feeSeq = thisRecord["FEEITEM_SEQ_NBR"] ? thisRecord["FEEITEM_SEQ_NBR"] : "";
+        thisFeeItem.caseCloseDate  = getCloseDate();
         //thisFeeItem.Area = new String(getGISInfo("WINSALEM", "Wards", "Ward")) || "";
         //thisFeeItem.Pin = new String(getGISInfo("WINSALEM", "Parcels", "PIN")) || "";
         //thisFeeItem.Block = new String(getGISInfo("WINSALEM", "Parcels", "BLK")) || "";
         //thisFeeItem.Lot = new String(getGISInfo("WINSALEM", "Parcels", "LOT")) || "";
-        //thisFeeItem.location = "";
-        //thisFeeItem.chargeType = "";
-        //thisFeeItem.chargeCode = thisRecord["GF_L1"] ? thisRecord["GF_L1"] : "";
+        thisFeeItem.location = "";
+        thisFeeItem.chargeType = "";
+        thisFeeItem.chargeCode = thisRecord["GF_L1"] ? thisRecord["GF_L1"] : "";
         thisFeeItem.caseID = altId;
         invoicedFeeItemsArray.push(thisFeeItem);     
         //
