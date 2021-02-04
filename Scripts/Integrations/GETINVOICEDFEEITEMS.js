@@ -47,7 +47,8 @@ try
         thisFeeItem.chargeType = "";
         thisFeeItem.chargeCode = thisRecord["GF_L1"] ? thisRecord["GF_L1"] : "";
         thisFeeItem.caseID = altId;
-        invoicedFeeItemsArray.push(thisFeeItem);        
+        invoicedFeeItemsArray.push(thisFeeItem);     
+        //
     }
 }
 catch (err) 
