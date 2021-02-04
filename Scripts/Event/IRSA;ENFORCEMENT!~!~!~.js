@@ -31,3 +31,5 @@ if (!isBlank(workflowStatus))
 {
 	resultWorkflowTask("Follow-Up Investigation", workflowStatus, "Updated via IRSA", "");
 }
+
+//Get fees not yet invoices and invoice them when Insp type is Final Inspection and insp result is Case Closed'

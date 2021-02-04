@@ -61,7 +61,7 @@ finally
 	result.message = message;
     result.invoicedFeeItemsArray = invoicedFeeItemsArray;
     aa.env.setValue("returnCode", "1");
-    aa.env.setValue("result", JSON.stringify(result));
+    aa.env.setValue("returnValue", JSON.stringify(result));
     //aa.env.setValue("result", result);
 }
 
