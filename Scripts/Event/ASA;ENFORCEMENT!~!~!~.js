@@ -25,7 +25,7 @@ else {
 updateGISCapInfo();
 
 //Get owners
-var capId = aa.cap.getCapID("GRS-21-00020").getOutput()
+//var capId = aa.cap.getCapID("GRS-21-00020").getOutput()
 var owners = aa.owner.getOwnerByCapId(capId).getOutput()
 //aa.print(owners[0].getOwnerFullName());
 for (x in owners) {
