@@ -33,3 +33,14 @@ if (!isBlank(workflowStatus))
 }
 
 //Get fees not yet invoices and invoice them when Insp type is Final Inspection and insp result is Case Closed'
+if (inspType == "Final" && inspResult == "Approved") {
+
+	closeTask("Final Inspection", "Approved", "Closed byt script in IRSA", "Closed byt script in IRSA")
+	var parent = getParents("Enforcement/Action Order/NA/NA");
+	if (parent) {
+		logDebug("Got parent: " + parent)
+		//var holdCap = capId;
+		//closeTask("Final Inspection", "Approved", "Closed byt script in IRSA", "Closed byt script in IRSA")
+		//If we have the parent at this point then close task action order with status of closed. Close record status with Closed.
+    }
+}
